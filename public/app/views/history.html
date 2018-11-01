@@ -1,0 +1,45 @@
+<div ng-controller="HistoryController">
+    <br/>
+    <div ng-show="history.upcomingBookings.length > 0">
+        <h2>Upcoming</h2>
+        <table class="MovieTable">
+            <tr>
+                <th class="MovieTableHeaderItem"></th>
+                <th class="MovieTableHeaderItem">Title</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Screen</th>
+            </tr>
+            <tr ng-repeat="movie in history.upcomingBookings">
+                <th class="MovieTableItem" style="text-align: center">
+                    <img ng-src="{{movie.posterURL}}" height="90" width="60">
+                </th>
+                <th class="MovieTableItem" style="word-wrap: normal;width:400px">{{movie.title}}</th>
+                <th class="MovieTableItem">{{movie.showtime}}</th>
+                <th class="MovieTableItem">{{movie.day}}/{{movie.month}}/{{movie.year}}</th>
+                <th class="MovieTableItem">{{movie.screen}}</th>
+            </tr>
+        </table>
+    </div>
+    <div ng-show="history.pastBookings.length > 0">
+        <h2>Past</h2>
+        <table class="MovieTable">
+            <tr>
+                <th class="MovieTableHeaderItem"></th>
+                <th class="MovieTableHeaderItem">Title</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Screen</th>
+            </tr>
+            <tr ng-repeat="movie in history.pastBookings">
+                <th class="MovieTableItem" style="text-align: center">
+                    <img ng-src="{{movie.posterURL}}" height="90" width="60">
+                </th>
+                <th class="MovieTableItem" style="word-wrap: normal;width:400px">{{movie.title}}</th>
+                <th class="MovieTableItem">{{movie.showtime}}</th>
+                <th class="MovieTableItem">{{movie.day}}/{{movie.month}}/{{movie.year}}</th>
+                <th class="MovieTableItem">{{movie.screen}}</th>
+            </tr>
+        </table>
+    </div>
+</div>

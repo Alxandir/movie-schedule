@@ -1,0 +1,63 @@
+<!doctype html>
+<html ng-app="myApp">
+
+<head>
+    <title>Movie Ranking</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+    <script src="app/js/script.js"></script>
+    <script src="app/js/overview.js"></script>
+    <script src="app/js/calendar.js"></script>
+    <script src="app/js/comingSoon.js"></script>
+    <script src="app/js/history.js"></script>
+    <script src="app/js/services/api.service.js"></script>
+    <link href="app/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body ng-controller="MainController">
+    <div class="main" ng-style="getBackground()">
+        <table class="tabButtons">
+            <tr>
+                <th class="tabButton" ng-click="selectedView = 5; getFeatured()" ng-class="{'highlightTab': selectedView == 5}">Overview</th>
+                <th class="tabButton" ng-click="selectedView = 0; getMoviePosters()" ng-class="{'highlightTab': selectedView == 0}">Rate</th>
+                <th class="tabButton" ng-click="selectedView = 1; returnToAdd()" ng-class="{'highlightTab': selectedView == 1}">Add A Movie</th>
+                <th class="tabButton" ng-click="selectedView = 2; getAllMovies()" ng-class="{'highlightTab': selectedView == 2}">Leaderboard</th>
+                <th class="tabButton" ng-click="selectedView = 3; getCalendar()" ng-class="{'highlightTab': selectedView == 3}">Movie Planner</th>
+                <th class="tabButton" ng-click="selectedView = 4; getComingSoonCalendar()" ng-class="{'highlightTab': selectedView == 4}">Coming Soon</th>
+                <th class="tabButton" ng-click="selectedView = 6; getHistory()" ng-class="{'highlightTab': selectedView == 6}">History</th>
+            </tr>
+        </table>
+        <div class="innerPane">
+            <div ng-show="selectedView == 5">
+                <div ng-include="'app/views/overview.html'"></div>
+            </div>
+            
+            <div ng-show="selectedView == 0">
+                <div ng-include="'app/views/rating.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 1">
+                <div ng-include="'app/views/addMovie.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 2">
+                <div ng-include="'app/views/leaderboard.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 3">
+                <div ng-include="'app/views/calendar.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 4">
+                <div ng-include="'app/views/comingSoon.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 6">
+                <div ng-include="'app/views/history.html'"></div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+<table class="MovieTable">
+    <tr>
+        <th class="MovieTableHeaderItem"></th>
+        <th class="MovieTableHeaderItem">Title</th>
+        <th>Year</th>
+        <th>Score</th>
+    </tr>
+    <tr ng-repeat="movie in allMovies">
+        <th class="MovieTableItem" style="text-align: center">
+            <img ng-src="{{movie.posterURL}}" height="90" width="60">
+        </th>
+        <th class="MovieTableItem">{{movie.title}}</th>
+        <th class="MovieTableItem">{{movie.year}}</th>
+        <th class="MovieTableItem">{{movie.score}}</th>
+    </tr>
+</table>

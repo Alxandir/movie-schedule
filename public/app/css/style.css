@@ -1,0 +1,293 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+html,
+body {
+    font-family: 'Roboto', sans-serif;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    cursor: default;
+    user-select: none;
+    display: inline-block;
+    overflow: hidden;
+}
+
+a {
+    cursor: pointer;
+}
+
+h2 {
+    margin: 0;
+    font-family: inherit;
+    color: #9b9b9b;
+}
+
+.submitButton {
+    background-color: #009788;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.main {
+    font-family: inherit;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    background: no-repeat;
+    background-position: center;
+    background-color: black;
+    background-size: cover;
+    overflow: auto;
+    text-align: center;
+}
+
+.innerPane {
+    text-align: center;
+    background-color: rgba(31, 31, 31, 0.85);
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    overflow-y: auto;
+}
+
+.youtubePane {
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 200px;
+    overflow-y: auto;
+}
+
+.poster {
+    display: inline-block;
+    margin: 50px;
+    vertical-align: middle
+}
+
+.highlight {
+    border: 5px solid rgba(0, 97, 88, 1);
+    margin: 45px;
+}
+
+.disabled {
+    background-color: #00978855;
+    color: #FFFFFF55;
+    cursor: auto;
+}
+
+.tabButtons{
+    font-family: inherit;
+    width:100%;
+    table-layout: fixed;
+}
+
+.tabButton {
+    font-family: inherit;
+    color: #d2d2d2;
+    background-color: rgba(31, 31, 31, 0.85);
+    cursor: pointer;
+    width: 16%
+}
+
+.highlightTab {
+    border-bottom: 5px solid rgba(0, 97, 88, 1);
+}
+
+.MovieTable {
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    color: #9b9b9b;
+}
+
+.bookedHighlight {
+    color: #41c0c0;
+}
+
+
+.form__group {
+  position: relative;
+  padding: 15px 0 0;
+  margin-top: 10px;
+}
+
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #d2d2d2;
+  outline: 0;
+  font-size: 16px;
+  color: #009788;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+
+.form__field::placeholder {
+  color: transparent;
+}
+
+.form__field:placeholder-shown ~ .form__label {
+  font-size: 16px;
+  cursor: text;
+  top: 20px;
+}
+
+label,
+.form__field:focus ~ .form__label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.2s;
+  font-size: 12px;
+  color: #9b9b9b;
+}
+
+.form__field:focus ~ .form__label {
+  color: #009788;
+}
+
+.form__field:focus {
+  padding-bottom: 6px;
+  border-bottom: 2px solid #009788;
+}
+
+.MovieTableItem {
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.MovieTableHeaderItem {
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: bold;
+}
+
+.calendarTable {
+    
+    color: #9b9b9b;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.calendarTableHeaderItem {
+    font-weight: bold;
+    width:100px;
+}
+
+.calendarTableItem {
+    text-align: left;
+    width:150px;
+    height:225px;
+    /* background-size: 100% auto; */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: background 0.4s ease-in-out;
+}
+
+.outlineCell:hover {
+    background-color: rgba(70, 70, 70, 0.85);
+}
+
+.outlineCell {
+    border: 1px solid #9b9b9b;
+    cursor: pointer;
+}
+
+.todayCell {
+    background-color: rgba(00,97,88,0.85);
+}
+
+.calendarDateLine {
+    color: #9b9b9b;
+    padding-top: 10px;
+}
+
+.calendarTableOuter {
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+}
+
+.featureTableOuter {
+    padding-bottom: 30px;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+    line-height: 30px;
+  color: #9b9b9b;
+  text-align: center;
+  background: rgba(31, 31, 31, 0.85);
+}
+
+.red {
+    background-color: #a80505cb;
+    color: #dadada;
+}
+
+.blue {
+    border: 3px solid #00978870;
+}
+
+.overlay {
+    z-index: 1000;
+    width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+    background-color: rgba(0,0,0,0.7);
+    overflow-y: auto;
+}
+
+
+
+.showtimeTable {
+    color: #9b9b9b;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.OverlayTitle {
+    font-family: 'Roboto', sans-serif;
+    color: #9b9b9b;
+}
+
+.showtimeTableCell {
+    width:75px;
+    height:40px;
+    text-align: center;
+}
+
+.wrapTitle {
+    word-wrap: normal;
+    width:200px;
+}
+
+.featureTabButton {
+    font-family: inherit;
+    color: #d2d2d2;
+    background-color: rgba(31, 31, 31, 0.85);
+    cursor: pointer;
+    width: 50%
+}

@@ -1,0 +1,19 @@
+<div style="margin-left: 100px;margin-right: 100px; vertical-align: middle">
+    <div style="display: inline-block">
+        <div class="form__group">
+            <input type="text" id="title" class="form__field" placeholder="Movie Title" ng-model="newFilm.title" dl-enter-key="findPoster()">
+            <label for="email" class="form__label">Title</label>
+        </div>
+        <div class="form__group">
+            <input type="number" id="year" class="form__field" placeholder="2017" ng-model="newFilm.year" dl-enter-key="findPoster()">
+            <label for="year" class="form__label">Year</label>
+        </div>
+    </div>
+    <input class="submitButton" type="button" ng-click='findPoster()' value="Get Poster" ng-class="{'disabled': newFilm.title=='' || newFilm.year<=1900 || newFilm.year>=2100}" style="display: inline-block; vertical-align: middle; margin-top: -60px; margin-left: 50px">
+</div>
+<br />
+<div ng-show="showWarning == true">
+    <h2>Movie not found</h2>
+</div>
+<img class="poster" ng-src="{{newFilm.posterURL}}" height="450" width="300" ng-show="newFilm.posterURL!=''"><br />
+<input class="submitButton" type="button" ng-click='add()' value="Add" ng-class="{'disabled': newFilm.title=='' || newFilm.year<=1900 || newFilm.year>=2100 || newFilm.posterURL==''}" style="margin-bottom:50px" ng-show="newFilm.posterURL!=''">

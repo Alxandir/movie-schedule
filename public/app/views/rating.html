@@ -1,0 +1,3 @@
+<img class="poster" ng-src="{{films[0].posterURL}}" height="450" width="300" ng-click="selectedMovie = 0" ng-class="{'highlight': selectedMovie == 0}">
+<input class="submitButton" type="button" ng-click='submitRating()' value="Submit" ng-class="{'disabled': selectedMovie==-1}">
+<img class="poster" ng-src="{{films[1].posterURL}}" height="450" width="300" ng-click="selectedMovie = 1" ng-class="{'highlight': selectedMovie == 1}">

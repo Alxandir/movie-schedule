@@ -1,0 +1,87 @@
+<div ng-controller="CalendarController">
+    <div class="overlay" ng-show="enableYoutube" ng-click="pauseVideo()">
+        <div class="youtubePane">
+            <iframe ng-if="enableYoutube" id="ytplayer" type="text/html" width="720" height="405" ng-src="{{selectedTrailer}}" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="overlay" ng-show="enableShadow" ng-click="enableShadow=false">
+        <div class="innerPane">
+            <h1 class="OverlayTitle">Showtimes on {{showtimeDay}} {{showtimeDayNum}} {{monthNames[calendar.month-1]}}</h1><br/>
+            <table class="MovieTable" style="padding-left: 50px; padding-right: 50px; padding-top: 10px;">
+                <!-- <tr>
+                    <th class="MovieTableHeaderItem"></th>
+                    <th class="MovieTableHeaderItem">Title</th>
+                    <th>Showtimes</th>
+                </tr> -->
+                <tr ng-repeat="movie in showtimeMovies">
+                    <th class="MovieTableItem" style="text-align: center">
+                        <div style="position: relative; cursor: pointer" ng-mouseover="showPlayIcon[$index] = true" ng-mouseleave="showPlayIcon[$index] = false" ng-click="setTrailerURL(movie.title)">
+                            <img ng-src="{{movie.posterURL}}" height="150" width="100" on-error-movie="{{movie}}" year={{calendar.year}}>
+                            <i class="fa fa-youtube-play" ng-show="showPlayIcon[$index]" style="position: absolute; z-index: 1000; left: 25%; top: 35%; font-size:48px;color:red"></i>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="text-align:left">
+                            <div class="wrapTitle" style="color: whitesmoke; font-size: 20px">{{movie.title}}</div>
+                            <div ng-if="movie.duration !== undefined">Duration: {{movie.duration}} minutes</div>
+                            <div ng-if="movie.releaseDate !== undefined">Release Date: {{movie.releaseDate}}</div>
+                            <div class="bookedHighlight" ng-if="movie.seen === true">Watched</div>
+                            <div class="bookedHighlight" ng-if="movie.bookingExists === true">Already Booked</div>
+                        </div>
+                    </th>
+                    <th class="MovieTableItem">
+                        <table class="showtimeTable">
+                            <tr ng-show="movie.showtimes.D2!=null">
+                                <th>
+                                    2D
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="outlineCell showtimeTableCell" ng-repeat="showtime in movie.showtimes.D2" ng-click="bookShowtime(movie, showtime.time, showtime.screen);" ng-class="{'todayCell':currentlyBooked(movie,showtime.time)!=false}">{{showtime.time}}</th>
+                            </tr>
+                            <tr ng-show="movie.showtimes.D3!=null">
+                                <th>3D</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="outlineCell showtimeTableCell" ng-repeat="showtime in movie.showtimes.D3" ng-click="bookShowtime(movie, showtime.time, showtime.screen);" ng-class="{'todayCell':currentlyBooked(movie,showtime.time)!=false}">{{showtime.time}}</th>
+                            </tr>
+                            <tr ng-show="movie.showtime!=null">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th class="outlineCell showtimeTableCell" ng-click="bookShowtime(movie, movie.showtime, movie.screen);" ng-class="{'todayCell':currentlyBooked(movie,movie.showtime)!=false}">{{movie.showtime}}</th>
+                                </tr>
+                        </table>
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="calendarDateLine">
+        <input class="submitButton" type="button" ng-click='decrementDate()' value="<"> {{monthNames[calendar.month-1]}} {{calendar.year}}
+        <input class="submitButton" type="button" ng-click='incrementDate()' value=">">
+        <br/>
+    </div>
+    <div class="calendarTableOuter">
+        <table class="calendarTable">
+            <tr>
+                <th class="calendarTableHeaderItem">Sun</th>
+                <th class="calendarTableHeaderItem">Mon</th>
+                <th class="calendarTableHeaderItem">Tues</th>
+                <th class="calendarTableHeaderItem">Wed</th>
+                <th class="calendarTableHeaderItem">Thurs</th>
+                <th class="calendarTableHeaderItem">Fri</th>
+                <th class="calendarTableHeaderItem">Sat</th>
+            </tr>
+            <tr ng-repeat="week in calendar.weeks">
+                <th class="calendarTableItem" ng-repeat="day in week" ng-style="setBackgroundImage(day.movie)" ng-class="{'outlineCell': day.number!='', 'todayCell':checkIfToday(day.number)==true}" ng-click="lookupShowTimes(day);">
+                    <div style="margin-left: 10px;" class=circle ng-class="{'blue':day.showtimesAvailable}" ng-show="day.number!='' && (day.movie !== '' || day.showtimesAvailable)">{{day.number}}</div>
+                    <div style="margin-left: 10px;" ng-show="day.number!='' && day.movie=='' && !day.showtimesAvailable">{{day.number}}</div>
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>

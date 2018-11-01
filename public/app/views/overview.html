@@ -1,0 +1,25 @@
+<div ng-controller="OverviewController">
+    <div class="overlay" ng-show="enableYoutube" ng-click="pauseVideo()">
+        <div class="youtubePane">
+            <iframe ng-if="enableYoutube" id="ytplayer" type="text/html" width="720" height="405" ng-src="{{selectedTrailer}}" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="featureTableOuter">
+        <table style="width:100%; padding-bottom: 30px">
+            <tr>
+                <th class="featureTabButton" ng-class="{'highlightTab': selectedFeaturedTab === 'SHOWING'}" ng-click="selectedFeaturedTab = 'SHOWING'; getFeaturedMovies()">Now Booking</th>
+                <th class="featureTabButton" ng-class="{'highlightTab': selectedFeaturedTab == 'FUTURE'}" ng-click="selectedFeaturedTab = 'FUTURE'; getFeaturedMovies()">Coming Soon</th>
+            </tr>
+        </table>
+        <table class="calendarTable">
+            <tr ng-repeat="gridRow in featureGrid">
+                <th ng-repeat="movie in gridRow" class="MovieTableItem" style="text-align: center; padding-bottom: 35px">
+                    <div style="position: relative; cursor: pointer" ng-click="setTrailerURL(movie.title)">
+                        <img ng-src="{{movie.posterURL}}" height="300" width="200" on-error-movie="{{movie}}">
+<!--                        <i class="fa fa-youtube-play" ng-show="showPlayIcon[$index]" style="position: absolute; z-index: 1000; left: 25%; top: 35%; font-size:48px;color:red"></i>-->
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>

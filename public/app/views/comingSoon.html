@@ -1,0 +1,47 @@
+<div ng-controller="ComingSoonController">
+    <div class="overlay" ng-show="enableYoutube" ng-click="pauseVideo()">
+        <div class="youtubePane">
+            <iframe ng-if="enableYoutube" id="ytplayer" type="text/html" width="720" height="405" ng-src="{{selectedTrailer}}" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="overlay" ng-show="enableShadow" ng-click="enableShadow=false">
+        <div class="innerPane">
+            <h1 class="OverlayTitle">Releases on {{showtimeDay}} {{showtimeDayNum}} {{monthNames[calendar.month-1]}}</h1><br/>
+            <table class="calendarTable">
+                <tr ng-repeat="gridRow in movieGrid">
+                    <th ng-repeat="movie in gridRow" class="MovieTableItem" style="text-align: center; padding-bottom: 35px">
+                        <div style="position: relative; cursor: pointer" ng-click="setTrailerURL(movie.title + ' ' + movie.date.split('-')[0])"  ng-attr-title="{{movie.title}}">
+                            <img ng-src="{{movie.posterURL}}" height="300" width="200" on-error-movie="{{movie}}">
+    <!--                        <i class="fa fa-youtube-play" ng-show="showPlayIcon[$index]" style="position: absolute; z-index: 1000; left: 25%; top: 35%; font-size:48px;color:red"></i>-->
+                        </div>
+                    </th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="calendarDateLine">
+        <input class="submitButton" type="button" ng-click='decrementDate()' value="<"> {{monthNames[calendar.month-1]}} {{calendar.year}}
+        <input class="submitButton" type="button" ng-click='incrementDate()' value=">">
+        <br/>
+    </div>
+    <div class="calendarTableOuter">
+        <table class="calendarTable">
+            <tr>
+                <th class="calendarTableHeaderItem">Sun</th>
+                <th class="calendarTableHeaderItem">Mon</th>
+                <th class="calendarTableHeaderItem">Tues</th>
+                <th class="calendarTableHeaderItem">Wed</th>
+                <th class="calendarTableHeaderItem">Thurs</th>
+                <th class="calendarTableHeaderItem">Fri</th>
+                <th class="calendarTableHeaderItem">Sat</th>
+            </tr>
+            <tr ng-repeat="week in calendar.weeks">
+                <th class="calendarTableItem" ng-repeat="day in week" ng-style="setBackgroundImage(day.movies, scrollingIndex, day.movies.length)" ng-class="{'outlineCell': day.number!='', 'todayCell':checkIfToday(day.number)==true}" ng-click="selectDay(day.number, day.movies)" ng-attr-title="{{day.movies[scrollingIndex % day.movies.length].title}}">
+                    <div style="margin-left: 10px;" class=circle ng-show="day.number!='' && day.movies[0]">{{day.number}}</div>
+                    <div style="margin-right: 10px; margin-top: -120px; float: right" class="circle red" ng-show="day.movies && day.movies.length > 1">{{day.movies.length}}</div>
+                    <div style="margin-left: 10px;" ng-show="day.number!='' && !day.movies[0]">{{day.number}}</div>
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>
