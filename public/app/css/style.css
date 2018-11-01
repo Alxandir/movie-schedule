@@ -249,6 +249,10 @@ label,
     border: 3px solid #00978870;
 }
 
+.noClick {
+    cursor: default;
+}
+
 .overlay {
     z-index: 1000;
     width: 100%;
