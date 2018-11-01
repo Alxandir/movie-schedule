@@ -24,7 +24,7 @@ const getFeatures = async function (type) {
     return output;
 }
 
-const getValidDates = async function() {
+const getValidDates = async function () {
     const dateString = moment().add(1, 'year').format('YYYY-MM-DD');
     const options = {
         uri: buildValidDatesURL(dateString),
@@ -33,6 +33,28 @@ const getValidDates = async function() {
     }
     const data = await request(options);
     return data.body.dates;
+}
+
+const getShowtimes = function(date) {
+    const options = {
+        method: 'GET',
+        uri: buildShowtimesURL(date),
+        json: true
+    };
+    return request(options);
+}
+
+function buildShowtimesURL(date = new Date(), siteId = '10108') {
+    var month = String(date.getMonth() + 1);
+    if (month.length < 2) {
+        month = '0' + month;
+    }
+    var day = String(date.getDate());
+    if (day.length < 2) {
+        day = '0' + day;
+    }
+    var url = `https://www.cineworld.co.uk/uk/data-api-service/v1/quickbook/${siteId}/film-events/in-cinema/8104/at-date/${date.getFullYear()}-${month}-${day}?attr=&lang=en_GB`;
+    return url;
 }
 
 function buildOverviewURL(type, siteId = 10108) {
@@ -45,5 +67,6 @@ function buildValidDatesURL(dateString = '2019-11-01', siteId = 10108) {
 
 module.exports = {
     getFeatures,
+    getShowtimes,
     getValidDates
 }

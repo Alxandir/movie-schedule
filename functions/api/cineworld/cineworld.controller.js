@@ -23,24 +23,38 @@ const getShowings = async function (req, res) {
     }
     
     let featureData;
-    let movies;
+    let showtimes;
     try {
-        const options = {
-            method: 'GET',
-            uri: buildURL(date),
-            json: true
-        };
         featureData = await cineworldService.getFeatures('SHOWING');
-        movies = await request(options);
+        showtimes = await cineworldService.getShowtimes(date);
     } catch(err) {
+        console.log(err);
         return res.status(500).send(err);
     }
-    let titles = [];
-    if (!movies.body || !movies.body.films || movies.body.films.length === 0) {
+    if (!showtimes.body || !showtimes.body.films || showtimes.body.films.length === 0) {
         return res.status(200).send("No Showings Found");
     }
-    var output = [];
-    for (var item of movies.body.films) {
+    let { movies, titles } = buildMoviesList(featureData, showtimes.body.films, showtimes.body.events, req.body.hour);
+    let existingBookings = await movieDB.getBookingsByTitle(titles);
+    movies = movies.map(movie => {
+        let booked = existingBookings.find(p => p.title === movie.title);
+        if (booked) {
+            if (booked.timestamp <= moment().valueOf()) {
+                movie.seen = true;
+            } else {
+                movie.bookingExists = true;
+            }
+        }
+        return movie;
+    })
+
+    return res.status(200).send(movies);
+}
+
+function buildMoviesList(featureData, movies, events, minHour = false) {
+    const titles = [];
+    const output = [];
+    for (var item of movies) {
         var movie = {};
         movie.title = item.name;
         titles.push(item.name);
@@ -54,32 +68,19 @@ const getShowings = async function (req, res) {
         if (movieFeature) {
             movie.releaseDate = movieFeature.date;
         }
-
-        for (var event of movies.body.events) {
-            var showtime = {};
-            if (event.filmId === item.id) {
-                showtime.time = event.eventDateTime.split('T')[1];
-                showtime.screen = 0;
-                if (parseInt(showtime.time.split(':')[0]) < req.body.hour) {
-                    continue;
-                }
-                if (showtime.time.split(':').length > 2) {
-                    showtime.time = showtime.time.substr(0, showtime.time.lastIndexOf(':'));
-                }
-                if (event.attributeIds.indexOf('3d') > -1) {
-                    showtime.format = '3D';
-                    if (movie.showtimes.D3 == null) movie.showtimes.D3 = [];
-                    movie.showtimes.D3.push(showtime);
-                } else {
-                    showtime.format = '2D';
-                    if (movie.showtimes.D2 == null) movie.showtimes.D2 = [];
-                    movie.showtimes.D2.push(showtime);
-                }
-            }
+        const { twoD, threeD } = buildShowtimeArrays(events, item.id, minHour);
+        if(twoD.length > 0) {
+            movie.showtimes.D2 = twoD;
+        }
+        if(threeD.length > 0) {
+            movie.showtimes.D3 = threeD;
         }
         if (movie.showtimes.D2 != null || movie.showtimes.D3 != null) {
             output.push(movie);
         }
+    }
+    if(output.length === 0 && minHour !== false) {
+        return buildMoviesList(featureData, movies, events);
     }
     output.sort(function(a, b) {
         a = new Date(a.releaseDate);
@@ -87,20 +88,36 @@ const getShowings = async function (req, res) {
         return a>b ? -1 : a<b ? 1 : 0;
     });
     output.map(p => p.releaseDate = moment(p.releaseDate).format("Do MMMM YYYY"))
-    let existingBookings = await movieDB.getBookingsByTitle(titles);
-    output = output.map(movie => {
-        let booked = existingBookings.find(p => p.title === movie.title);
-        if (booked) {
-            if (booked.timestamp <= moment().valueOf()) {
-                movie.seen = true;
+    return { movies: output, titles };
+}
+
+function buildShowtimeArrays(events, movieId, minHour) {
+    const threeD = [];
+    const twoD = [];
+    for (var event of events) {
+        var showtime = {};
+        if (event.filmId === movieId) {
+            showtime.time = event.eventDateTime.split('T')[1];
+            showtime.screen = 0;
+            if (minHour !== false && parseInt(showtime.time.split(':')[0]) < minHour) {
+                continue;
+            }
+            if (showtime.time.split(':').length > 2) {
+                showtime.time = showtime.time.substr(0, showtime.time.lastIndexOf(':'));
+            }
+            if (event.attributeIds.includes('3d')) {
+                showtime.format = '3D';
+                threeD.push(showtime);
             } else {
-                movie.bookingExists = true;
+                showtime.format = '2D';
+                twoD.push(showtime);
             }
         }
-        return movie;
-    })
-
-    return res.status(200).send(output);
+    }
+    return {
+        twoD,
+        threeD
+    }
 }
 
 const addBooking = async function (req, res) {
@@ -167,19 +184,6 @@ const removeBooking = async function (req, res) {
     } catch (err) {
         res.status(500).json(err);
     }
-}
-
-function buildURL(date, siteID = '10108') {
-    var month = String(date.getMonth() + 1);
-    if (month.length < 2) {
-        month = '0' + month;
-    }
-    var day = String(date.getDate());
-    if (day.length < 2) {
-        day = '0' + day;
-    }
-    var url = `https://www.cineworld.co.uk/uk/data-api-service/v1/quickbook/${siteID}/film-events/in-cinema/8104/at-date/${date.getFullYear()}-${month}-${day}?attr=&lang=en_GB`;
-    return url;
 }
 
 const getAllBookings = async function (req, res) {

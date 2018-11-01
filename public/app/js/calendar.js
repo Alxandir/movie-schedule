@@ -150,7 +150,11 @@ angular.module('myApp').controller('CalendarController', function ($scope, $http
         if (day.length === 1) {
             day = '0' + day;
         }
-        const date = `${$scope.calendar.year}-${$scope.calendar.month}-${day}`;
+        const month = String($scope.calendar.month);
+        if(month.length === 1) {
+            month = '0' + month;
+        }
+        const date = `${$scope.calendar.year}-${month}-${day}`;
         console.log(date);
         return $scope.validDates.includes(date);
     }

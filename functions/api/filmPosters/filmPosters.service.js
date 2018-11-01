@@ -8,9 +8,9 @@ const getPoster = async function (title, year) {
         method: 'GET',
         json: true
     }
-    console.log(options);
+    
     const response = await request(options);
-    console.log(response);
+    
     if (response.results[0] != null) {
         return {
             posterURL: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' + response.results[0].poster_path,
