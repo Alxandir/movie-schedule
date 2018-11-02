@@ -12,7 +12,7 @@ const PUNCTUATION_REGEX = /[!@#$%^&*()-=_+|;':",.<>?']/;
 
 const getShowings = async function (req, res) {
     if (!req.body || !req.body.year || !req.body.month || !req.body.day || !req.body.hour) {
-        return res.status(500).send("Bad request");
+        return res.status(500).send('Bad request');
     }
     var date = new Date(req.body.year, req.body.month - 1, req.body.day);
     const currentDate = moment().startOf('day').valueOf();
