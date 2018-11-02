@@ -78,8 +78,7 @@
             </tr>
             <tr ng-repeat="week in calendar.weeks">
                 <th class="calendarTableItem" ng-repeat="day in week" ng-style="setBackgroundImage(day.movie)" ng-class="{'outlineCell': day.number!='', 'todayCell':checkIfToday(day.number)==true, 'noClick': !day.showtimesAvailable && day.movie === ''}" ng-click="lookupShowTimes(day);">
-                    <div style="margin-left: 10px;" class=circle ng-class="{'blue':day.showtimesAvailable}" ng-show="day.number!='' && (day.movie !== '' || day.showtimesAvailable)">{{day.number}}</div>
-                    <div style="margin-left: 10px;" ng-show="day.number!='' && day.movie=='' && !day.showtimesAvailable">{{day.number}}</div>
+                    <div style="margin-left: 10px;" class="circle" ng-class="{ 'shade':day.movie!=='', 'blue':day.showtimesAvailable }" ng-show="day.number!=''">{{day.number}}</div>
                 </th>
             </tr>
         </table>

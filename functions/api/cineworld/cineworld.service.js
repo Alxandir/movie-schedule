@@ -65,8 +65,13 @@ function buildValidDatesURL(dateString = '2019-11-01', siteId = 10108) {
     return ` https://www.cineworld.co.uk/uk/data-api-service/v1/quickbook/${siteId}/dates/in-cinema/8104/until/${dateString}?attr=&lang=en_GB`;
 }
 
+const buildPosterURL = function(id) {
+    return "http://www.cineworld.co.uk/xmedia-cw/repo/feats/posters/" + id.toUpperCase() + "-lg.jpg";
+}
+
 module.exports = {
     getFeatures,
     getShowtimes,
-    getValidDates
+    getValidDates,
+    buildPosterURL
 }

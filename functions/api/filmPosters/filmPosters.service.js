@@ -1,8 +1,9 @@
 var request = require('request-promise');
 
+var movieDB = require('../firebase/firebase.controller');
+
 const getPoster = async function (title, year) {
-    console.log('IN poster service');
-    title = title.replace("&", "and");
+    title = title.replace('&', 'and');
     const options = {
         uri: buildPosterURL(title, year),
         method: 'GET',
@@ -13,8 +14,8 @@ const getPoster = async function (title, year) {
     
     if (response.results[0] != null) {
         return {
-            posterURL: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' + response.results[0].poster_path,
-            backgroundURL: 'https://image.tmdb.org/t/p/original/' + response.results[0].backdrop_path
+            posterURL: buildPosterImageURL(response.results[0].poster_path),
+            backgroundURL: buildBackgroundImageURL(response.results[0].backdrop_path)
         }
     }
 
@@ -26,8 +27,8 @@ const getPoster = async function (title, year) {
     const previousYear = await request(lastYearOptions);
     if (previousYear.results[0] != null) {
         return {
-            posterURL: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' + previousYear.results[0].poster_path,
-            backgroundURL: 'https://image.tmdb.org/t/p/original/' + previousYear.results[0].backdrop_path
+            posterURL: buildPosterImageURL(previousYear.results[0].poster_path),
+            backgroundURL: buildBackgroundImageURL(previousYear.results[0].backdrop_path)
         }
     }
 
@@ -39,12 +40,35 @@ const getPoster = async function (title, year) {
     const unknownYear = await request(UnknownYearOptions);
     if (unknownYear.results[0] != null) {
         return {
-            posterURL: 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' + unknownYear.results[0].poster_path,
-            backgroundURL: 'https://image.tmdb.org/t/p/original/' + unknownYear.results[0].backdrop_path
+            posterURL: buildPosterImageURL(unknownYear.results[0].poster_path),
+            backgroundURL: buildBackgroundImageURL(unknownYear.results[0].backdrop_path)
         }
     }
     
     throw new Error('Unable to find movie poster');
+}
+
+const getMovieComparison = async function () {
+    const data = await movieDB.listMovies();
+    allMovies = data;
+    var index1 = Math.floor(Math.random() * allMovies.length);
+    var index2 = 0;
+    do {
+        index2 = Math.floor(Math.random() * allMovies.length);
+    } while (index2 == index1);
+    
+    return [
+        allMovies[index1],
+        allMovies[index2]
+    ];
+}
+
+const buildPosterImageURL = function(path) {
+    return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' + path;
+}
+
+const buildBackgroundImageURL = function(path) {
+    return 'https://image.tmdb.org/t/p/original/' + path
 }
 
 const buildPosterURL = function (title, year) {
@@ -62,5 +86,8 @@ const buildPosterURL = function (title, year) {
 
 module.exports = {
     getPoster,
-    buildPosterURL
+    buildPosterURL,
+    buildPosterImageURL,
+    buildBackgroundImageURL,
+    getMovieComparison
 }

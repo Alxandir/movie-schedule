@@ -1,11 +1,14 @@
-var queries = require('../query');
-const request = require('request-promise');
 const spelling = require('american-english');
 const moment = require('moment');
+
+var queries = require('../query');
 var movieDB = require('../firebase/firebase.controller');
 
 const cineworldService = require('./cineworld.service');
 const posterService = require('../filmPosters/filmPosters.service');
+
+const SECRET_SCREENING_IMG = 'app/images/secret-screening.jpg';
+const PUNCTUATION_REGEX = /[!@#$%^&*()-=_+|;':",.<>?']/;
 
 const getShowings = async function (req, res) {
     if (!req.body || !req.body.year || !req.body.month || !req.body.day || !req.body.hour) {
@@ -32,7 +35,7 @@ const getShowings = async function (req, res) {
         return res.status(500).send(err);
     }
     if (!showtimes.body || !showtimes.body.films || showtimes.body.films.length === 0) {
-        return res.status(200).send("No Showings Found");
+        return res.status(200).send('No Showings Found');
     }
     let { movies, titles } = buildMoviesList(featureData, showtimes.body.films, showtimes.body.events, req.body.hour);
     let existingBookings = await movieDB.getBookingsByTitle(titles);
@@ -61,7 +64,7 @@ function buildMoviesList(featureData, movies, events, minHour = false) {
         if (item.name.endsWith(': Unlimited Screening')) {
             titles.push(item.name.split(': Unlimited Screening')[0]);
         }
-        movie.posterURL = "http://www.cineworld.co.uk/xmedia-cw/repo/feats/posters/" + item.id.toUpperCase() + "-lg.jpg";
+        movie.posterURL = cineworldService.buildPosterURL(item.id);
         movie.duration = item.length;
         movie.showtimes = {};
         const movieFeature = featureData.find(p => p.title === item.name);
@@ -75,7 +78,7 @@ function buildMoviesList(featureData, movies, events, minHour = false) {
         if(threeD.length > 0) {
             movie.showtimes.D3 = threeD;
         }
-        if (movie.showtimes.D2 != null || movie.showtimes.D3 != null) {
+        if (threeD.length + twoD.length > 0) {
             output.push(movie);
         }
     }
@@ -87,7 +90,7 @@ function buildMoviesList(featureData, movies, events, minHour = false) {
         b = new Date(b.releaseDate);
         return a>b ? -1 : a<b ? 1 : 0;
     });
-    output.map(p => p.releaseDate = moment(p.releaseDate).format("Do MMMM YYYY"))
+    output.map(p => p.releaseDate = moment(p.releaseDate).format('Do MMMM YYYY'))
     return { movies: output, titles };
 }
 
@@ -122,17 +125,17 @@ function buildShowtimeArrays(events, movieId, minHour) {
 
 const addBooking = async function (req, res) {
     if (!req.body || !req.body.title || !req.body.showtime || !req.body.year || !req.body.month || !req.body.day || !req.body.timestamp || !req.body.posterURL) {
-        return res.status(500).send("Bad request");
+        return res.status(500).send('Bad request');
     }
     var newBooking = {
-        "title": req.body.title,
-        "showtime": req.body.showtime,
-        "year": req.body.year,
-        "screen": req.body.screen,
-        "posterURL": req.body.posterURL,
-        "month": req.body.month,
-        "day": req.body.day,
-        "timestamp": req.body.timestamp
+        title: req.body.title,
+        showtime: req.body.showtime,
+        year: req.body.year,
+        screen: req.body.screen,
+        posterURL: req.body.posterURL,
+        month: req.body.month,
+        day: req.body.day,
+        timestamp: req.body.timestamp
     }
     if (req.body.duration) {
         newBooking.duration = req.body.duration;
@@ -143,7 +146,7 @@ const addBooking = async function (req, res) {
 
     var searchTitle = newBooking.title;
     if (searchTitle === 'Secret Unlimited Screening') {
-        newBooking.posterURL = "app/images/secret-screening.jpg";
+        newBooking.posterURL = SECRET_SCREENING_IMG;
         try {
             const data = await movieDB.addBooking();
             return res.status(200).json(data);
@@ -161,13 +164,10 @@ const addBooking = async function (req, res) {
     searchTitle = searchTitle.split(' + ')[0];
     searchTitle = americaniseSentence(searchTitle);
     try {
-        console.log(searchTitle, req.body.year);
         const poster = await posterService.getPoster(searchTitle, req.body.year);
-        console.log(poster);
         newBooking.posterURL = poster.posterURL;
         newBooking.backgroundURL = poster.backgroundURL;
         const data = await movieDB.addBooking(newBooking);
-        console.log(data);
         return res.status(200).send(data);
     } catch (err) {
         return res.status(500).json(err);
@@ -176,7 +176,7 @@ const addBooking = async function (req, res) {
 
 const removeBooking = async function (req, res) {
     if (!req.body || !req.body.title || !req.body.showtime || !req.body.year || !req.body.month || !req.body.day) {
-        return res.status(500).send("Bad request");
+        return res.status(500).send('Bad request');
     }
     try {
         const data = await movieDB.removeBooking(req.body);
@@ -211,7 +211,7 @@ const getFeatures = async function (req, res) {
         try {
             let movies = await cineworldService.getFeatures(query.type);
             if (movies.length < 1) {
-                return res.status(200).send("No Features Found");
+                return res.status(200).send('No Features Found');
             }
             return res.status(200).send(movies);
         } catch (err) {
@@ -219,7 +219,7 @@ const getFeatures = async function (req, res) {
             res.status(500).send('An unexpected error occured while getting featured movies');
         }
     } else {
-        res.status(500).send("Movie type not provided. (?type=1/2)");
+        res.status(500).send('Movie type not provided. (?type=1/2)');
     }
 }
 
@@ -227,9 +227,9 @@ const queryBookings = async function (req, res) {
     if (!req.body.title) {
         res.status(400).send('No titles given in query');
     }
-    let titles = req.body.title;
+    const titles = req.body.title;
     try {
-        let result = await movieDB.getBookingsByTitle(titles);
+        const result = await movieDB.getBookingsByTitle(titles);
         res.status(200).send(result);
     } catch (err) {
         res.status(500).send(err);
@@ -253,10 +253,10 @@ function americaniseSentence(input) {
 }
 
 function removePunctuation(input) {
-    if (input.match(/[!@#$%^&*()-=_+|;':",.<>?']/)) {
-        let result = input.match(/[!@#$%^&*()-=_+|;':",.<>?']/);
-        let punctuation = result[0];
-        let clean = input.substr(0, result.index);
+    const punctuationMatch = input.match(PUNCTUATION_REGEX);
+    if (punctuationMatch) {
+        let punctuation = punctuationMatch[0];
+        let clean = input.substr(0, punctuationMatch.index);
         return {
             clean,
             punctuation
@@ -266,14 +266,14 @@ function removePunctuation(input) {
 }
 
 function americaniseWord(input) {
-    let result = removePunctuation(input);
+    const result = removePunctuation(input);
     let punctuation = '';
     let word = input;
     if (result) {
         punctuation = result.punctuation;
         word = result.clean;
     }
-    let american = spelling.toUS(word);
+    const american = spelling.toUS(word);
     if (american === 'word_not_found') {
         return null;
     } else {

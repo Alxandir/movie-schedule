@@ -237,7 +237,10 @@ label,
     line-height: 30px;
   color: #9b9b9b;
   text-align: center;
-  background: rgba(31, 31, 31, 0.85);
+}
+
+.shade {
+    background: rgba(31, 31, 31, 0.85);
 }
 
 .red {
