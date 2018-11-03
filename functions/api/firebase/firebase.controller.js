@@ -84,7 +84,7 @@ async function updateItem(database, item) {
 }
 
 const initDB = function () {
-    var serviceAccount = require("../../movie-ranking-a85ed-firebase-adminsdk-7a9to-b848185c1a.json");
+    var serviceAccount = require("../../movie-ranking-a85ed-e681893ea0c4.json");
 
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
