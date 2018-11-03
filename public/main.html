@@ -1,0 +1,105 @@
+<!doctype html>
+<html ng-app="myApp">
+
+<head>
+    <title>Movie Ranking</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+    <script src="app/js/script.js"></script>
+    <script src="app/js/overview.js"></script>
+    <script src="app/js/calendar.js"></script>
+    <script src="app/js/comingSoon.js"></script>
+    <script src="app/js/history.js"></script>
+    <script src="app/js/services/api.service.js"></script>
+    <link href="app/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://www.gstatic.com/firebasejs/5.5.7/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBhdREgckQ2VRcn-ppQb8pqINRZqwxQUQU",
+            authDomain: "movie-ranking-a85ed.firebaseapp.com",
+            databaseURL: "https://movie-ranking-a85ed.firebaseio.com",
+            projectId: "movie-ranking-a85ed",
+            storageBucket: "movie-ranking-a85ed.appspot.com",
+            messagingSenderId: "602774623935"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script type="text/javascript">
+        initApp = function () {
+            firebase.auth().onAuthStateChanged(function (user) {
+                if (user) {
+                    // User is signed in.
+                    var displayName = user.displayName;
+                    var email = user.email;
+                    var emailVerified = user.emailVerified;
+                    var photoURL = user.photoURL;
+                    var uid = user.uid;
+                    sessionStorage.setItem("userId", user.uid);
+                    sessionStorage.setItem("userImg", user.photoURL);
+                    sessionStorage.setItem("userName", user.displayName);
+                    user.getIdToken().then(function (accessToken) {
+                        sessionStorage.setItem("userAccessToken", accessToken);
+                    });
+                }
+            }, function (error) {
+                console.log(error);
+            });
+        };
+
+        window.addEventListener('load', function () {
+            initApp()
+        });
+    </script>
+</head>
+
+<body ng-controller="MainController">
+    <div class="main" ng-style="getBackground()">
+        <table class="tabButtons">
+            <tr>
+                <th class="tabButton" ng-click="selectedView = 5; getFeatured()" ng-class="{'highlightTab': selectedView == 5}">Overview</th>
+                <th class="tabButton" ng-click="selectedView = 0; getMoviePosters()" ng-class="{'highlightTab': selectedView == 0}">Rate</th>
+                <th class="tabButton" ng-click="selectedView = 1; returnToAdd()" ng-class="{'highlightTab': selectedView == 1}">Add
+                    A Movie</th>
+                <th class="tabButton" ng-click="selectedView = 2; getAllMovies()" ng-class="{'highlightTab': selectedView == 2}">Leaderboard</th>
+                <th class="tabButton" ng-click="selectedView = 3; getCalendar()" ng-class="{'highlightTab': selectedView == 3}">Movie
+                    Planner</th>
+                <th class="tabButton" ng-click="selectedView = 4; getComingSoonCalendar()" ng-class="{'highlightTab': selectedView == 4}">Coming
+                    Soon</th>
+                <th class="tabButton" ng-click="selectedView = 6; getHistory()" ng-class="{'highlightTab': selectedView == 6}">History</th>
+            </tr>
+        </table>
+        <div class="innerPane">
+            <div ng-show="selectedView == 5">
+                <div ng-include="'app/views/overview.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 0">
+                <div ng-include="'app/views/rating.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 1">
+                <div ng-include="'app/views/addMovie.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 2">
+                <div ng-include="'app/views/leaderboard.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 3">
+                <div ng-include="'app/views/calendar.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 4">
+                <div ng-include="'app/views/comingSoon.html'"></div>
+            </div>
+
+            <div ng-show="selectedView == 6">
+                <div ng-include="'app/views/history.html'"></div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

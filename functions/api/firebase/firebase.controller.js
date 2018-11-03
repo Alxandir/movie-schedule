@@ -3,12 +3,16 @@ var admin = require('firebase-admin');
 
 var dbCredentials = {
     movieDB: 'movies',
-    bookingDB: 'bookings'
+    bookingDB: 'bookings',
+    groupDB: 'groups',
+    userDB: 'users'
 };
 
 var firestore;
 var movieDB;
 var bookingDB;
+let groupDB;
+let userDB;
 
 const getBookingsByDate = async function (month, year, day = undefined) {
     let bookingRef;
@@ -19,6 +23,25 @@ const getBookingsByDate = async function (month, year, day = undefined) {
     }
     const snapshot = await bookingRef.get();
     return getResults(snapshot);
+}
+
+const getGroup = async function(id) {
+    const doc = await groupDB.doc(id).get();
+    return doc.data();
+}
+
+const getUser = async function(id) {
+    const doc = await userDB.doc(id).get();
+    return doc.data();
+}
+
+const getUserByField = async function(field, value) {
+    const snapshot = await userDB.where(field, '==', value).get();
+    return getResults(snapshot);
+}
+
+const verifyToken = function(token) {
+    return admin.auth().verifyIdToken(token);
 }
 
 const getBookingsByTitle = async function (titles) {
@@ -93,6 +116,8 @@ const initDB = function () {
     firestore = admin.firestore();
     movieDB = firestore.collection(dbCredentials.movieDB);
     bookingDB = firestore.collection(dbCredentials.bookingDB);
+    groupDB = firestore.collection(dbCredentials.groupDB);
+    userDB = firestore.collection(dbCredentials.userDB);
 }
 
 function getDBCredentialsUrl(jsonData) {
@@ -108,5 +133,9 @@ module.exports = {
     addBooking,
     updateBooking,
     updateMovie,
-    removeBooking
+    removeBooking,
+    getGroup,
+    getUser,
+    getUserByField,
+    verifyToken
 }

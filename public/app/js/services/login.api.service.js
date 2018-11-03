@@ -1,14 +1,12 @@
 (function () {
 
     angular
-        .module('myApp')
+        .module('loginApp')
         .service('apiService', APIService);
 
     /* @ngInject */
     function APIService($rootScope, $http, $q, $window) {
         this.get = function (url, headers = {}) {
-            const token = sessionStorage.getItem("userAccessToken");
-            headers.Authorization = 'Bearer ' + token;
             var defer = $q.defer();
             $http({
                 method: 'GET',
@@ -26,8 +24,6 @@
         };
 
         this.post = function (url, body, headers = {}) {
-            const token = sessionStorage.getItem("userAccessToken");
-            headers.Authorization = 'Bearer ' + token;
             var defer = $q.defer();
             $http({
                 method: 'POST',
@@ -46,8 +42,6 @@
         };
 
         this.put = function (url, body, headers = {}) {
-            const token = sessionStorage.getItem("userAccessToken");
-            headers.Authorization = 'Bearer ' + token;
             var defer = $q.defer();
             $http({
                 method: 'PUT',

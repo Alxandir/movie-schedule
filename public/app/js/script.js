@@ -1,5 +1,5 @@
 angular.module('myApp', []);
-angular.module('myApp').controller('MainController', function ($scope, $http, $interval, $sce, apiService) {
+angular.module('myApp').controller('MainController', function ($scope, $interval, $sce, apiService) {
     $scope.selectedMovie = -1;
     $scope.selectedView = 5;
     $scope.allMovies = [];
@@ -14,7 +14,7 @@ angular.module('myApp').controller('MainController', function ($scope, $http, $i
     $scope.backgroundURL = '';
     $scope.showWarning = false;
 
-
+    
     $scope.getBackground = function () {
         return {
             'background-image': 'url(' + $scope.backgroundURL + ')'
