@@ -18,19 +18,27 @@ const getCurrentUser = async function(req, res) {
 const createUser = async function(req, res) {
     const user = req.body;
     if(!user || !user.firstName || !user.lastName || !user.googleID) {
-        return req.status(407).send({success: false, error: 'Invalid params'});
+        return req.status(407).send({success: false, error: 'Invalid params (firstName, lastName, googleID)'});
     }
     try {
+        const currentTime = new Date().getTime();
         if(!user.group || user.group.length === 0) {
+            if(!user.siteId || !user.siteName) {
+                return req.status(407).send({success: false, error: 'Invalid params (siteId, siteName)'});
+            }
             const group = {
                 name: user.groupName,
-                siteId: user.siteId
+                siteId: user.siteId,
+                siteName: user.siteName,
+                createdAt: currentTime
             }
-            delete user.groupName;
-            delete user.siteId;
             const groupResult = await database.createGroup(group);
             user.group = groupResult.id;
         }
+        user.createdAt = currentTime;
+        delete user.groupName;
+        delete user.siteId;
+        delete user.siteName;
         await database.createUser(user);
         return res.status(200).send({ success: true, message: 'User successfully created'});
     } catch(err) {

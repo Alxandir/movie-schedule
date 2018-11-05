@@ -29,7 +29,7 @@ const getShowings = async function (req, res) {
     let featureData;
     let showtimes;
     try {
-        featureData = await cineworldService.getFeatures('SHOWING', req.body.siteId);
+        featureData = await cineworldService.getFeatures('SHOWING');
         showtimes = await cineworldService.getShowtimes(req.body.siteId, date);
     } catch (err) {
         console.log(err);
@@ -217,7 +217,7 @@ const getFeatures = async function (req, res) {
     if (req._parsedUrl.query != null) {
         var query = queries.parseQuery(req._parsedUrl.query);
         try {
-            let movies = await cineworldService.getFeatures(query.type, query.siteId);
+            let movies = await cineworldService.getFeatures(query.type);
             if (movies.length < 1) {
                 return res.status(200).send('No Features Found');
             }
@@ -253,6 +253,16 @@ const getValidDates = async function (req, res) {
     } catch (err) {
         console.log('err', err);
         res.status(500).send({ message: 'Failed to get valid dates', error: err });
+    }
+}
+
+const getCinemas = async function (req, res) {
+    try {
+        let result = await cineworldService.getCinemas();
+        res.status(200).send(result);
+    } catch (err) {
+        console.log('err', err);
+        res.status(500).send({ message: 'Failed to get cinemas', error: err });
     }
 }
 
@@ -299,4 +309,5 @@ module.exports = {
     getShowings,
     getFeatures,
     getValidDates,
+    getCinemas
 }

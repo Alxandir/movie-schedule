@@ -1,5 +1,5 @@
-angular.module('myApp', []);
-angular.module('myApp').controller('MainController', function ($scope, $rootScope, $interval, $sce, apiService) {
+angular.module('myApp', ['inputDropdown']);
+angular.module('myApp').controller('MainController', function ($scope, $interval, apiService) {
     $scope.selectedMovie = -1;
     $scope.selectedView = -1;
     $scope.allMovies = [];

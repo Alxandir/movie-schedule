@@ -12,6 +12,8 @@
     <script src="app/js/signup.js"></script>
     <script src="app/js/group.js"></script>
     <script src="app/js/services/api.service.js"></script>
+    <link rel='stylesheet' href='app/libs/inputDropdownStyles.css' />
+    <script src="app/libs/inputDropdown.js"></script>
     <link href="app/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <script src="https://www.gstatic.com/firebasejs/5.5.7/firebase.js"></script>
@@ -79,35 +81,35 @@
                 <div ng-include="'app/views/signup.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 5">
+            <div class="overflow" ng-show="selectedView == 5">
                 <div ng-include="'app/views/overview.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 0">
+            <div class="overflow" ng-show="selectedView == 0">
                 <div ng-include="'app/views/rating.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 1">
+            <div class="overflow" ng-show="selectedView == 1">
                 <div ng-include="'app/views/addMovie.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 2">
+            <div class="overflow" ng-show="selectedView == 2">
                 <div ng-include="'app/views/leaderboard.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 3">
+            <div class="overflow" ng-show="selectedView == 3">
                 <div ng-include="'app/views/calendar.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 4">
+            <div class="overflow" ng-show="selectedView == 4">
                 <div ng-include="'app/views/comingSoon.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 6">
+            <div class="overflow" ng-show="selectedView == 6">
                 <div ng-include="'app/views/history.html'"></div>
             </div>
 
-            <div ng-show="selectedView == 7">
+            <div class="overflow" ng-show="selectedView == 7" style="overflow-y:auto !important">
                     <div ng-include="'app/views/group.html'"></div>
                 </div>
 
