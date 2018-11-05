@@ -1,0 +1,55 @@
+<div ng-controller="SignUpController">
+    <div style="margin-left: 100px;margin-right: 100px; vertical-align: middle">
+        <h3>Sign up</h3>
+        <div style="display: inline-block">
+            <div class="form__group">
+                <input type="text" id="firstName" class="form__field" placeholder="First Name" ng-model="newUser.firstName"
+                    dl-enter-key="submitUser()">
+                <label for="firstName" class="form__label">First Name</label>
+            </div>
+            <div class="form__group">
+                <input type="text" id="lastName" class="form__field" placeholder="Last Name" ng-model="newUser.lastName"
+                    dl-enter-key="submitUser()">
+                <label for="lastName" class="form__label">Last Name</label>
+            </div>
+            <div class="form__group" style="margin-bottom: 40px">
+                <div style="display: inline">
+                    <div>
+                        <label for="groupChoice1" class="form__label">
+                            <input type="radio" id="groupChoice1" class="form__field" ng-model="newUser.isNewGroup"
+                                value="true">
+                            New Group</label>
+                    </div>
+                    <div style="margin-left: 100px">
+                        <label for="groupChoice2" class="form__label">
+                            <input type="radio" id="groupChoice2" class="form__field" ng-model="newUser.isNewGroup"
+                                value="false">
+                            Existing Group</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group" ng-if="newUser.isNewGroup === 'false'">
+                <input type="text" id="groupId" class="form__field" placeholder="Group ID" ng-model="newUser.group"
+                    dl-enter-key="submitUser()">
+                <label for="groupId" class="form__label">Group ID</label>
+                <input class="submitButton" type="button" ng-click='checkGroup(newUser.group)' value="Check Group">
+            </div>
+            <div class="form__group" ng-if="newUser.isNewGroup === 'true'">
+                <input type="text" id="groupName" class="form__field" placeholder="Group Name" ng-model="newUser.groupName"
+                    dl-enter-key="submitUser()">
+                <label for="groupName" class="form__label">Group Name</label>
+            </div>
+            <div class="form__group" ng-if="newUser.isNewGroup === 'true'">
+                <input type="text" id="cinemaId" class="form__field" placeholder="Cinema ID" ng-model="newUser.siteId"
+                    dl-enter-key="submitUser()">
+                <label for="cinemaId" class="form__label">Cinema ID</label>
+            </div>
+        </div>
+        <input class="submitButton" type="button" ng-click='submitNewUser()' value="Register" style="display: inline-block; vertical-align: middle; margin-top: -60px; margin-left: 50px">
+        <!-- ng-class="{'disabled': newUser.group == '' || newUser.firstName == '' || newUser.lastName == ''" -->
+    </div>
+    <br />
+    <div ng-show="newUser.groupName !== '' && newUser.isNewGroup === 'false'">
+        <h2>Group: {{newUser.groupName}}</h2>
+    </div>
+</div>

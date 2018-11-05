@@ -11,26 +11,27 @@ const SECRET_SCREENING_IMG = 'app/images/secret-screening.jpg';
 const PUNCTUATION_REGEX = /[!@#$%^&*()-=_+|;':",.<>?']/;
 
 const getShowings = async function (req, res) {
-    if (!req.body || !req.body.year || !req.body.month || !req.body.day || !req.body.hour) {
+    const group = req.user.group;
+    if (!req.body || !req.body.year || !req.body.month || !req.body.day || !req.body.hour || !req.body.siteId) {
         return res.status(500).send('Bad request');
     }
     var date = new Date(req.body.year, req.body.month - 1, req.body.day);
     const currentDate = moment().startOf('day').valueOf();
     if (currentDate > date.getTime()) {
         try {
-            const data = await movieDB.getBookingsByDate(req.body.month, req.body.year, req.body.day);
+            const data = await movieDB.getBookingsByDate(group, req.body.month, req.body.year, req.body.day);
             return res.status(200).json(data);;
         } catch (err) {
             return res.status(500).send(error);;
         }
     }
-    
+
     let featureData;
     let showtimes;
     try {
-        featureData = await cineworldService.getFeatures('SHOWING');
-        showtimes = await cineworldService.getShowtimes(date);
-    } catch(err) {
+        featureData = await cineworldService.getFeatures('SHOWING', req.body.siteId);
+        showtimes = await cineworldService.getShowtimes(req.body.siteId, date);
+    } catch (err) {
         console.log(err);
         return res.status(500).send(err);
     }
@@ -38,7 +39,7 @@ const getShowings = async function (req, res) {
         return res.status(200).send('No Showings Found');
     }
     let { movies, titles } = buildMoviesList(featureData, showtimes.body.films, showtimes.body.events, req.body.hour);
-    let existingBookings = await movieDB.getBookingsByTitle(titles);
+    let existingBookings = await movieDB.getBookingsByTitle(group, titles);
     movies = movies.map(movie => {
         let booked = existingBookings.find(p => p.title === movie.title);
         if (booked) {
@@ -72,23 +73,23 @@ function buildMoviesList(featureData, movies, events, minHour = false) {
             movie.releaseDate = movieFeature.date;
         }
         const { twoD, threeD } = buildShowtimeArrays(events, item.id, minHour);
-        if(twoD.length > 0) {
+        if (twoD.length > 0) {
             movie.showtimes.D2 = twoD;
         }
-        if(threeD.length > 0) {
+        if (threeD.length > 0) {
             movie.showtimes.D3 = threeD;
         }
         if (threeD.length + twoD.length > 0) {
             output.push(movie);
         }
     }
-    if(output.length === 0 && minHour !== false) {
+    if (output.length === 0 && minHour !== false) {
         return buildMoviesList(featureData, movies, events);
     }
-    output.sort(function(a, b) {
+    output.sort(function (a, b) {
         a = new Date(a.releaseDate);
         b = new Date(b.releaseDate);
-        return a>b ? -1 : a<b ? 1 : 0;
+        return a > b ? -1 : a < b ? 1 : 0;
     });
     output.map(p => p.releaseDate = moment(p.releaseDate).format('Do MMMM YYYY'))
     return { movies: output, titles };
@@ -124,6 +125,7 @@ function buildShowtimeArrays(events, movieId, minHour) {
 }
 
 const addBooking = async function (req, res) {
+    const group = req.user.group;
     if (!req.body || !req.body.title || !req.body.showtime || !req.body.year || !req.body.month || !req.body.day || !req.body.timestamp || !req.body.posterURL) {
         return res.status(500).send('Bad request');
     }
@@ -135,7 +137,8 @@ const addBooking = async function (req, res) {
         posterURL: req.body.posterURL,
         month: req.body.month,
         day: req.body.day,
-        timestamp: req.body.timestamp
+        timestamp: req.body.timestamp,
+        group
     }
     if (req.body.duration) {
         newBooking.duration = req.body.duration;
@@ -148,7 +151,7 @@ const addBooking = async function (req, res) {
     if (searchTitle === 'Secret Unlimited Screening') {
         newBooking.posterURL = SECRET_SCREENING_IMG;
         try {
-            const data = await movieDB.addBooking();
+            const data = await movieDB.addBooking(newBooking);
             return res.status(200).json(data);
         } catch (err) {
             return res.status(500).json(err);
@@ -160,6 +163,9 @@ const addBooking = async function (req, res) {
     searchTitle = searchTitle.replace('&', 'and');
     searchTitle = searchTitle.replace('SubM4J ', '');
     searchTitle = searchTitle.replace('M4J ', '');
+    searchTitle = searchTitle.replace('(4DX) ', '');
+    searchTitle = searchTitle.replace('(SS) ', '');
+    searchTitle = searchTitle.replace('(4DX 3D) ', '');
     searchTitle = searchTitle.replace('Classic Movie Monday ', '');
     searchTitle = searchTitle.split(' + ')[0];
     searchTitle = americaniseSentence(searchTitle);
@@ -187,18 +193,20 @@ const removeBooking = async function (req, res) {
 }
 
 const getAllBookings = async function (req, res) {
+    const group = req.user.group;
     if (req._parsedUrl.query != null) {
         var query = queries.parseQuery(req._parsedUrl.query);
+        const group = req.user.group;
         try {
-            const bookings = await movieDB.getBookingsByDate(query.month, query.year, query.day);
-            const validDates = await cineworldService.getValidDates();
+            const bookings = await movieDB.getBookingsByDate(group, query.month, query.year, query.day);
+            const validDates = await cineworldService.getValidDates(query.siteId);
             return res.status(200).json({ bookings, validDates });
         } catch (err) {
             return res.status(500).send(err);
         }
     }
     try {
-        const data = await movieDB.listAllBookings();
+        const data = await movieDB.listAllBookings(group);
         return res.status(200).json(data);
     } catch (err) {
         return res.status(500).send(err);
@@ -209,7 +217,7 @@ const getFeatures = async function (req, res) {
     if (req._parsedUrl.query != null) {
         var query = queries.parseQuery(req._parsedUrl.query);
         try {
-            let movies = await cineworldService.getFeatures(query.type);
+            let movies = await cineworldService.getFeatures(query.type, query.siteId);
             if (movies.length < 1) {
                 return res.status(200).send('No Features Found');
             }
@@ -228,8 +236,9 @@ const queryBookings = async function (req, res) {
         res.status(400).send('No titles given in query');
     }
     const titles = req.body.title;
+    const group = req.user.group;
     try {
-        const result = await movieDB.getBookingsByTitle(titles);
+        const result = await movieDB.getBookingsByTitle(group, titles);
         res.status(200).send(result);
     } catch (err) {
         res.status(500).send(err);
@@ -238,11 +247,12 @@ const queryBookings = async function (req, res) {
 
 const getValidDates = async function (req, res) {
     try {
-        let result = await cineworldService.getValidDates();
+        var query = queries.parseQuery(req._parsedUrl.query);
+        let result = await cineworldService.getValidDates(query.siteId);
         res.status(200).send(result);
     } catch (err) {
         console.log('err', err);
-        res.status(500).send({message: 'Failed to get valid dates', error: err});
+        res.status(500).send({ message: 'Failed to get valid dates', error: err });
     }
 }
 

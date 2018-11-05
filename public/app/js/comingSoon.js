@@ -1,4 +1,4 @@
-angular.module('myApp').controller('ComingSoonController', function ($scope, $http, $interval, $sce, apiService) {
+angular.module('myApp').controller('ComingSoonController', function ($scope, $rootScope, $interval, $sce, apiService) {
     $scope.enableShadow = false;
     $scope.enableYoutube = false;
     $scope.init = false;
@@ -31,17 +31,29 @@ angular.module('myApp').controller('ComingSoonController', function ($scope, $ht
     },8000);
 
     $scope.getComingSoonCalendar = function () {
+        if (!$rootScope.siteId) {
+            return apiService.get('api/groups').then(group => {
+                $rootScope.siteId = group.siteId;
+                getComingSoonCalendarInner();
+            }).catch(err => {
+                console.error(err);
+            });
+        }
+        getComingSoonCalendarInner();
+    }
+
+    function getComingSoonCalendarInner() {
         if(Object.keys($scope.calendarMovies).length > 0) {
             buildMonth();
             return;
         }
-        apiService.get('api/cineworld/featured?type=SHOWING')
+        apiService.get('api/cineworld/featured?type=SHOWING&siteId=' + $rootScope.siteId)
         .then(outNowRaw => {
             let outNow = outNowRaw.sort(sortMovies);
             for(movie of outNow) {
                 addCalendarItem(movie);
             }
-            apiService.get('api/cineworld/featured?type=FUTURE')
+            apiService.get('api/cineworld/featured?type=FUTURE&siteId=' + $rootScope.siteId)
             .then(futureRaw => {
                 let future = futureRaw.sort(sortMovies);
                 for(movie of future) {

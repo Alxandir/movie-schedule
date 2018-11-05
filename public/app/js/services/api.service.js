@@ -6,7 +6,7 @@
 
     /* @ngInject */
     function APIService($rootScope, $http, $q, $window) {
-        this.get = function (url, headers = {}) {
+        this.get = function (url, headers = {}, redirect = true) {
             const token = sessionStorage.getItem("userAccessToken");
             headers.Authorization = 'Bearer ' + token;
             var defer = $q.defer();
@@ -17,7 +17,7 @@
             }).then(function(response) {
                 defer.resolve(response.data);
             }, function(err) {
-                if(err.status === 401) {
+                if(err.status === 401 && redirect) {
                     $window.location.href = '/';
                 }
                 defer.reject(err);
@@ -25,7 +25,7 @@
             return defer.promise;
         };
 
-        this.post = function (url, body, headers = {}) {
+        this.post = function (url, body, headers = {}, redirect = true) {
             const token = sessionStorage.getItem("userAccessToken");
             headers.Authorization = 'Bearer ' + token;
             var defer = $q.defer();
@@ -37,7 +37,7 @@
             }).then(function(response) {
                 defer.resolve(response.data);
             }, function(err) {
-                if(err.status === 401) {
+                if(err.status === 401 && redirect) {
                     $window.location.href = '/';
                 }
                 defer.reject(err);
@@ -45,7 +45,7 @@
             return defer.promise;
         };
 
-        this.put = function (url, body, headers = {}) {
+        this.put = function (url, body, headers = {}, redirect = true) {
             const token = sessionStorage.getItem("userAccessToken");
             headers.Authorization = 'Bearer ' + token;
             var defer = $q.defer();
@@ -57,7 +57,7 @@
             }).then(function(response) {
                 defer.resolve(response.data);
             }, function(err) {
-                if(err.status === 401) {
+                if(err.status === 401 && redirect) {
                     $window.location.href = '/';
                 }
                 defer.reject(err);

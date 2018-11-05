@@ -9,9 +9,11 @@
     <script src="app/js/calendar.js"></script>
     <script src="app/js/comingSoon.js"></script>
     <script src="app/js/history.js"></script>
+    <script src="app/js/signup.js"></script>
+    <script src="app/js/group.js"></script>
     <script src="app/js/services/api.service.js"></script>
     <link href="app/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <script src="https://www.gstatic.com/firebasejs/5.5.7/firebase.js"></script>
     <script>
         // Initialize Firebase
@@ -30,6 +32,7 @@
             firebase.auth().onAuthStateChanged(function (user) {
                 if (user) {
                     // User is signed in.
+                    var scope = angular.element(document.getElementById('AngularAppBody')).scope();
                     var displayName = user.displayName;
                     var email = user.email;
                     var emailVerified = user.emailVerified;
@@ -40,6 +43,7 @@
                     sessionStorage.setItem("userName", user.displayName);
                     user.getIdToken().then(function (accessToken) {
                         sessionStorage.setItem("userAccessToken", accessToken);
+                        scope.openApp();
                     });
                 }
             }, function (error) {
@@ -53,9 +57,9 @@
     </script>
 </head>
 
-<body ng-controller="MainController">
+<body ng-controller="MainController" id="AngularAppBody">
     <div class="main" ng-style="getBackground()">
-        <table class="tabButtons">
+        <table class="tabButtons" ng-show="selectedView > 0">
             <tr>
                 <th class="tabButton" ng-click="selectedView = 5; getFeatured()" ng-class="{'highlightTab': selectedView == 5}">Overview</th>
                 <th class="tabButton" ng-click="selectedView = 0; getMoviePosters()" ng-class="{'highlightTab': selectedView == 0}">Rate</th>
@@ -67,9 +71,14 @@
                 <th class="tabButton" ng-click="selectedView = 4; getComingSoonCalendar()" ng-class="{'highlightTab': selectedView == 4}">Coming
                     Soon</th>
                 <th class="tabButton" ng-click="selectedView = 6; getHistory()" ng-class="{'highlightTab': selectedView == 6}">History</th>
+                <th class="tabButton" ng-click="selectedView = 7; getGroup()" ng-class="{'highlightTab': selectedView == 7}">Group</th>
             </tr>
         </table>
         <div class="innerPane">
+            <div ng-show="selectedView == -2">
+                <div ng-include="'app/views/signup.html'"></div>
+            </div>
+
             <div ng-show="selectedView == 5">
                 <div ng-include="'app/views/overview.html'"></div>
             </div>
@@ -97,6 +106,11 @@
             <div ng-show="selectedView == 6">
                 <div ng-include="'app/views/history.html'"></div>
             </div>
+
+            <div ng-show="selectedView == 7">
+                    <div ng-include="'app/views/group.html'"></div>
+                </div>
+
         </div>
 
     </div>

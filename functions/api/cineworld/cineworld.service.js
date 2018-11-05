@@ -1,8 +1,8 @@
 const request = require('request-promise');
 const moment = require('moment');
 
-const getFeatures = async function (type) {
-    var url = buildOverviewURL(type);
+const getFeatures = async function (type, siteId) {
+    var url = buildOverviewURL(type, siteId);
     const options = {
         method: 'GET',
         uri: url,
@@ -24,10 +24,10 @@ const getFeatures = async function (type) {
     return output;
 }
 
-const getValidDates = async function () {
+const getValidDates = async function (siteId) {
     const dateString = moment().add(1, 'year').format('YYYY-MM-DD');
     const options = {
-        uri: buildValidDatesURL(dateString),
+        uri: buildValidDatesURL(dateString, siteId),
         method: 'GET',
         json: true
     }
@@ -35,10 +35,10 @@ const getValidDates = async function () {
     return data.body.dates;
 }
 
-const getShowtimes = function(date) {
+const getShowtimes = function(siteId, date) {
     const options = {
         method: 'GET',
-        uri: buildShowtimesURL(date),
+        uri: buildShowtimesURL(date, siteId),
         json: true
     };
     return request(options);

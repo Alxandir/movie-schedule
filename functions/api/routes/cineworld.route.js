@@ -10,6 +10,6 @@ router.put('/bookings', controller.addBooking);
 router.post('/bookings', controller.removeBooking);
 router.get(':?', controller.getAllBookings);
 router.get('/featured:?', controller.getFeatures);
-router.get('/valid', controller.getValidDates);
+router.get('/valid:?', controller.getValidDates);
 
 module.exports = router;

@@ -1,7 +1,6 @@
 const firebase = require('../firebase/firebase.controller');
 
 const authenticate = async function (req, res, next) {
-    console.log(req.headers.authorization);
     if(!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
         return res.status(401).send('Invalid token');
     }
@@ -10,7 +9,7 @@ const authenticate = async function (req, res, next) {
         const googleUser = await firebase.verifyToken(token);
         const dbUsers = await firebase.getUserByField('googleID', googleUser.uid);
         if(!dbUsers || dbUsers.length === 0) {
-            res.status(401).send('User not found');
+            return res.status(401).send('User not found');
         }
         const user = dbUsers[0];
         req.user = {
