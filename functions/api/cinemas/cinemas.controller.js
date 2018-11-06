@@ -181,11 +181,8 @@ const addBooking = async function (req, res) {
 }
 
 const removeBooking = async function (req, res) {
-    if (!req.body || !req.body.title || !req.body.showtime || !req.body.year || !req.body.month || !req.body.day) {
-        return res.status(500).send('Bad request');
-    }
     try {
-        const data = await movieDB.removeBooking(req.body);
+        const data = await movieDB.removeBooking(req.params.id);
         return res.status(200).json(data);
     } catch (err) {
         res.status(500).json(err);
@@ -228,20 +225,6 @@ const getFeatures = async function (req, res) {
         }
     } else {
         res.status(500).send('Movie type not provided. (?type=1/2)');
-    }
-}
-
-const queryBookings = async function (req, res) {
-    if (!req.body.title) {
-        res.status(400).send('No titles given in query');
-    }
-    const titles = req.body.title;
-    const group = req.user.group;
-    try {
-        const result = await movieDB.getBookingsByTitle(group, titles);
-        res.status(200).send(result);
-    } catch (err) {
-        res.status(500).send(err);
     }
 }
 
@@ -303,7 +286,6 @@ function americaniseWord(input) {
 
 module.exports = {
     getAllBookings,
-    queryBookings,
     addBooking,
     removeBooking,
     getShowings,

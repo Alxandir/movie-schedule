@@ -35,13 +35,13 @@ angular.module('myApp').controller('ComingSoonController', function ($scope, $ro
             buildMonth();
             return;
         }
-        apiService.get('api/cineworld/featured?type=SHOWING')
+        apiService.get('api/cinemas/featured?type=SHOWING')
         .then(outNowRaw => {
             let outNow = outNowRaw.sort(sortMovies);
             for(movie of outNow) {
                 addCalendarItem(movie);
             }
-            apiService.get('api/cineworld/featured?type=FUTURE')
+            apiService.get('api/cinemas/featured?type=FUTURE')
             .then(futureRaw => {
                 let future = futureRaw.sort(sortMovies);
                 for(movie of future) {

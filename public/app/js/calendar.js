@@ -48,7 +48,7 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
         $scope.calendar.weeks = generateEmptyCalendar($scope.calendar.year, $scope.calendar.month);
         let weekIndex = 0;
 
-        apiService.get(`api/cineworld?month=${$scope.calendar.month}&year=${$scope.calendar.year}&siteId=${$rootScope.siteId}`)
+        apiService.get(`api/cinemas/bookings?month=${$scope.calendar.month}&year=${$scope.calendar.year}&siteId=${$rootScope.siteId}`)
             .then(response => {
                 const bookings = response.bookings;
                 $scope.validDates = response.validDates;
@@ -132,7 +132,7 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
                 hour: 15,
                 siteId: $rootScope.siteId
             }
-            apiService.post('api/cineworld', data)
+            apiService.post('api/cinemas', data)
                 .then(showtimes => {
                     if (showtimes === 'No Showings Found') {
                         console.log(`No showtimes available for date: ${data.day}/${data.month}/${data.year}`)
@@ -170,31 +170,30 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
     }
 
     $scope.bookShowtime = function (movie, showtime, screen) {
-        var hour = parseInt(showtime.split(':')[0]);
-        var minutes = parseInt(showtime.split(':')[1]);
-        var d = new Date($scope.calendar.year, $scope.calendar.month - 1, $scope.showtimeDayNum, hour, minutes, 0);
-        var data = {
-            showtime,
-            title: movie.title,
-            posterURL: movie.posterURL,
-            year: $scope.calendar.year,
-            month: $scope.calendar.month,
-            day: $scope.showtimeDayNum,
-            screen: screen,
-            timestamp: d.getTime(),
-            duration: movie.duration,
-            releaseDate: movie.releaseDate
-        }
         var currentlyBooked = $scope.currentlyBooked(movie, showtime);
         if (currentlyBooked !== false) {
-            data._id = currentlyBooked;
-            apiService.post('api/cineworld/bookings', data)
-                .then(refreshCalendar)
-                .catch(err => {
-                    console.log(err);
-                })
+            apiService.delete('api/cinemas/bookings/' + currentlyBooked)
+            .then(refreshCalendar)
+            .catch(err => {
+                console.log(err);
+            })
         } else {
-            apiService.put('api/cineworld/bookings', data)
+            const hour = parseInt(showtime.split(':')[0]);
+            const minutes = parseInt(showtime.split(':')[1]);
+            var d = new Date($scope.calendar.year, $scope.calendar.month - 1, $scope.showtimeDayNum, hour, minutes, 0);
+            const data = {
+                showtime,
+                title: movie.title,
+                posterURL: movie.posterURL,
+                year: $scope.calendar.year,
+                month: $scope.calendar.month,
+                day: $scope.showtimeDayNum,
+                screen: screen,
+                timestamp: d.getTime(),
+                duration: movie.duration,
+                releaseDate: movie.releaseDate
+            }
+            apiService.put('api/cinemas/bookings', data)
                 .then(refreshCalendar)
                 .catch(err => {
                     console.log(err);

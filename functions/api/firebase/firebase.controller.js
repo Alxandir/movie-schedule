@@ -98,8 +98,8 @@ function addItemRaw(database, item) {
     return database.add(item);
 }
 
-const removeBooking = async function (booking) {
-    await bookingDB.doc(booking._id).delete();
+const removeBooking = async function (id) {
+    await bookingDB.doc(id).delete();
     return { success: true, message: 'Booking removed' };
 }
 

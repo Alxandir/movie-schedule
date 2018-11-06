@@ -67,7 +67,7 @@ angular.module('myApp').controller('SignUpController', function ($scope, $q, api
     }
 
     $scope.getCinemas = function () {
-        apiService.get('/api/cineworld/cinemas').then(result => {
+        apiService.get('/api/cinemas/venues').then(result => {
             $scope.cinemaNames = result.map(p => p.displayName);
             $scope.cinemas = result;
         }).catch(err => {

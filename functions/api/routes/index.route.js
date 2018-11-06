@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.use('/api/filmPosters', require('./posters.route'));
 router.use('/api/films', require('./films.route'));
-router.use('/api/cineworld', require('./cineworld.route'));
+router.use('/api/cinemas', require('./cinemas.route'));
 router.use('/api/groups', require('./groups.route'));
 router.use('/api/users', require('./users.route'));
 
