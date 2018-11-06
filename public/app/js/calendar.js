@@ -50,6 +50,7 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
 
         apiService.get(`api/cinemas/bookings?month=${$scope.calendar.month}&year=${$scope.calendar.year}&siteId=${$rootScope.siteId}`)
             .then(response => {
+                $scope.calendar.weeks = generateEmptyCalendar($scope.calendar.year, $scope.calendar.month);
                 const bookings = response.bookings;
                 $scope.validDates = response.validDates;
                 $scope.calendar.bookings = bookings;
