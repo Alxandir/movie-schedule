@@ -161,7 +161,7 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
         if (day.length === 1) {
             day = '0' + day;
         }
-        const month = String($scope.calendar.month);
+        let month = String($scope.calendar.month);
         if (month.length === 1) {
             month = '0' + month;
         }

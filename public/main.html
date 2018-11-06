@@ -61,7 +61,7 @@
 
 <body ng-controller="MainController" id="AngularAppBody">
     <div class="main" ng-style="getBackground()">
-        <table class="tabButtons" ng-show="selectedView > 0">
+        <table class="tabButtons" ng-show="selectedView >= 0">
             <tr>
                 <th class="tabButton" ng-click="selectedView = 5; getFeatured()" ng-class="{'highlightTab': selectedView == 5}">Overview</th>
                 <th class="tabButton" ng-click="selectedView = 0; getMoviePosters()" ng-class="{'highlightTab': selectedView == 0}">Rate</th>
