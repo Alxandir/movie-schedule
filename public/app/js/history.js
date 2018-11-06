@@ -10,7 +10,7 @@ angular.module('myApp').controller('HistoryController', function ($scope, $http,
     });
     
     $scope.getHistory = function () {
-        apiService.get('api/cineworld')
+        apiService.get('api/cinemas/bookings')
         .then(bookings => {
             $scope.history.bookings = bookings;
             $scope.history.pastBookings = [];

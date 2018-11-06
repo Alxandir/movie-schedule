@@ -1,4 +1,4 @@
-angular.module('myApp').controller('OverviewController', function ($scope, $http, $interval, $sce, apiService) {
+angular.module('myApp').controller('OverviewController', function ($scope, $sce, apiService) {
     $scope.features = {
         nowBooking: [],
         comingSoon: []
@@ -21,7 +21,7 @@ angular.module('myApp').controller('OverviewController', function ($scope, $http
         var currentKey = $scope.selectedFeaturedTab;
         if ($scope.features[currentKey] == null || (currentTime - $scope.lastUpdate[currentKey] > (10 * 60 * 1000))) {
             $scope.lastUpdate[currentKey] = currentTime;
-            apiService.get('api/cineworld/featured?type=' + ($scope.selectedFeaturedTab))
+            apiService.get(`api/cinemas/featured?type=${$scope.selectedFeaturedTab}`)
             .then(movies => {
                 $scope.features[currentKey] = movies;
                 $scope.generateGrid($scope.features[currentKey]);
@@ -29,8 +29,6 @@ angular.module('myApp').controller('OverviewController', function ($scope, $http
         } else {
             $scope.generateGrid($scope.features[currentKey]);
         }
-
-
     }
 
     $scope.pauseVideo = function () {
@@ -62,6 +60,4 @@ angular.module('myApp').controller('OverviewController', function ($scope, $http
             $scope.featureGrid.push(movies.slice(firstIndex, firstIndex + remainder));
         }
     }
-
-    $scope.getFeaturedMovies();
 });

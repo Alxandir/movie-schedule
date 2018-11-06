@@ -23,7 +23,13 @@ a {
 h2 {
     margin: 0;
     font-family: inherit;
-    color: #9b9b9b;
+    color: #d2d2d2;
+}
+
+h3 {
+    margin: 0;
+    font-family: inherit;
+    color: #d2d2d2;
 }
 
 .submitButton {
@@ -59,6 +65,9 @@ h2 {
     vertical-align: middle;
     margin-top: 100px;
     margin-bottom: 100px;
+}
+
+.overflow {
     overflow-y: auto;
 }
 
@@ -98,7 +107,7 @@ h2 {
     color: #d2d2d2;
     background-color: rgba(31, 31, 31, 0.85);
     cursor: pointer;
-    width: 16%
+    width: 14%
 }
 
 .highlightTab {
@@ -297,4 +306,53 @@ label,
     background-color: rgba(31, 31, 31, 0.85);
     cursor: pointer;
     width: 50%
+}
+
+/* DROPDOWN */
+.input-dropdown {
+    min-width: 100%;
+}
+
+.input-dropdown input {
+    /* Style the dropdown list */
+    background: transparent;
+    color: #009788;
+    outline: 0;
+    font-size: 16px;
+}
+
+.input-dropdown ul {
+    /* Style the dropdown list */
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.input-dropdown ul > li {
+    /* Style the dropdown list */
+    text-align: left;
+}
+
+.input-dropdown ul > li.active {
+    /* Style the dropdown list item when active. */
+    color: white;
+}
+
+.standardText {
+    color: #9b9b9b;
+    text-align: left;
+}
+
+.radioBox {
+    border: 1px solid #009788;
+    width: 150px;
+    height: 25px;
+    padding-top: 5px;
+    cursor: pointer;
+    color: #d2d2d2;
+    display: inline-block;
+    margin-right: -5px;
+}
+
+.radioBoxSelected {
+    background-color: #009788;
 }

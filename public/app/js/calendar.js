@@ -1,4 +1,4 @@
-angular.module('myApp').controller('CalendarController', function ($scope, $http, $interval, $sce, apiService) {
+angular.module('myApp').controller('CalendarController', function ($scope, $rootScope, $sce, apiService) {
     $scope.enableShadow = false;
     $scope.enableYoutube = false;
     $scope.init = false;
@@ -30,20 +30,37 @@ angular.module('myApp').controller('CalendarController', function ($scope, $http
     });
 
     $scope.getCalendar = function () {
-        const totalDays = daysInMonth($scope.calendar.year, $scope.calendar.month);
-        const dayOne = new Date($scope.calendar.year, $scope.calendar.month - 1, 1);
+        const month = $scope.calendar.month;
+        const year = $scope.calendar.year;
+        if (!$rootScope.siteId) {
+            return apiService.get('api/groups').then(group => {
+                $rootScope.siteId = group.siteId;
+                getCalendarInner(month, year);
+            }).catch(err => {
+                console.error(err);
+            });
+        }
+        getCalendarInner(month, year);
+    }
+
+    function getCalendarInner(month, year) {
+        const totalDays = daysInMonth(year, month);
+        const dayOne = new Date(year, month - 1, 1);
         let dayIndex = dayOne.getDay();
-        $scope.calendar.weeks = generateEmptyCalendar($scope.calendar.year, $scope.calendar.month);
         let weekIndex = 0;
 
-        apiService.get('api/cineworld?month=' + $scope.calendar.month + '&year=' + $scope.calendar.year)
+        apiService.get(`api/cinemas/bookings?month=${month}&year=${year}&siteId=${$rootScope.siteId}`)
             .then(response => {
+                if(month !== $scope.calendar.month || year !== $scope.calendar.year) {
+                    return;
+                }
+                $scope.calendar.weeks = generateEmptyCalendar($scope.calendar.year, $scope.calendar.month);
                 const bookings = response.bookings;
                 $scope.validDates = response.validDates;
                 $scope.calendar.bookings = bookings;
                 for (var i = 1; i <= totalDays; i++) {
                     $scope.calendar.weeks[weekIndex][dayIndex].number = i;
-                    $scope.calendar.weeks[weekIndex][dayIndex].showtimesAvailable = $scope.checkDateValidity(i);
+                    $scope.calendar.weeks[weekIndex][dayIndex].showtimesAvailable = checkDateValidity(i);
                     const booking = bookings.find(p => p.day === i);
                     if (booking) {
                         $scope.calendar.weeks[weekIndex][dayIndex].movie = booking.posterURL;
@@ -56,8 +73,6 @@ angular.module('myApp').controller('CalendarController', function ($scope, $http
             }).catch(err => {
                 console.log(err);
             });
-
-
     }
 
     function generateEmptyCalendar(year, month) {
@@ -119,9 +134,10 @@ angular.module('myApp').controller('CalendarController', function ($scope, $http
                 year: $scope.calendar.year,
                 month: $scope.calendar.month,
                 day,
-                hour: 15
+                hour: 15,
+                siteId: $rootScope.siteId
             }
-            apiService.post('api/cineworld', data)
+            apiService.post('api/cinemas', data)
                 .then(showtimes => {
                     if (showtimes === 'No Showings Found') {
                         console.log(`No showtimes available for date: ${data.day}/${data.month}/${data.year}`)
@@ -142,7 +158,7 @@ angular.module('myApp').controller('CalendarController', function ($scope, $http
         return false;
     }
 
-    $scope.checkDateValidity = function (day) {
+    function checkDateValidity(day) {
         day = String(day);
         if (!day || day.length === 0) {
             return false;
@@ -150,41 +166,39 @@ angular.module('myApp').controller('CalendarController', function ($scope, $http
         if (day.length === 1) {
             day = '0' + day;
         }
-        const month = String($scope.calendar.month);
-        if(month.length === 1) {
+        let month = String($scope.calendar.month);
+        if (month.length === 1) {
             month = '0' + month;
         }
         const date = `${$scope.calendar.year}-${month}-${day}`;
-        console.log(date);
         return $scope.validDates.includes(date);
     }
 
     $scope.bookShowtime = function (movie, showtime, screen) {
-        var hour = parseInt(showtime.split(':')[0]);
-        var minutes = parseInt(showtime.split(':')[1]);
-        var d = new Date($scope.calendar.year, $scope.calendar.month - 1, $scope.showtimeDayNum, hour, minutes, 0);
-        var data = {
-            showtime,
-            title: movie.title,
-            posterURL: movie.posterURL,
-            year: $scope.calendar.year,
-            month: $scope.calendar.month,
-            day: $scope.showtimeDayNum,
-            screen: screen,
-            timestamp: d.getTime(),
-            duration: movie.duration,
-            releaseDate: movie.releaseDate
-        }
         var currentlyBooked = $scope.currentlyBooked(movie, showtime);
         if (currentlyBooked !== false) {
-            data._id = currentlyBooked;
-            apiService.post('api/cineworld/bookings', data)
-                .then(refreshCalendar)
-                .catch(err => {
-                    console.log(err);
-                })
+            apiService.delete('api/cinemas/bookings/' + currentlyBooked)
+            .then(refreshCalendar)
+            .catch(err => {
+                console.log(err);
+            })
         } else {
-            apiService.put('api/cineworld/bookings', data)
+            const hour = parseInt(showtime.split(':')[0]);
+            const minutes = parseInt(showtime.split(':')[1]);
+            var d = new Date($scope.calendar.year, $scope.calendar.month - 1, $scope.showtimeDayNum, hour, minutes, 0);
+            const data = {
+                showtime,
+                title: movie.title,
+                posterURL: movie.posterURL,
+                year: $scope.calendar.year,
+                month: $scope.calendar.month,
+                day: $scope.showtimeDayNum,
+                screen: screen,
+                timestamp: d.getTime(),
+                duration: movie.duration,
+                releaseDate: movie.releaseDate
+            }
+            apiService.put('api/cinemas/bookings', data)
                 .then(refreshCalendar)
                 .catch(err => {
                     console.log(err);

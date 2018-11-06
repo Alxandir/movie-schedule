@@ -1,4 +1,4 @@
-angular.module('myApp').controller('ComingSoonController', function ($scope, $http, $interval, $sce, apiService) {
+angular.module('myApp').controller('ComingSoonController', function ($scope, $rootScope, $interval, $sce, apiService) {
     $scope.enableShadow = false;
     $scope.enableYoutube = false;
     $scope.init = false;
@@ -35,13 +35,13 @@ angular.module('myApp').controller('ComingSoonController', function ($scope, $ht
             buildMonth();
             return;
         }
-        apiService.get('api/cineworld/featured?type=SHOWING')
+        apiService.get('api/cinemas/featured?type=SHOWING')
         .then(outNowRaw => {
             let outNow = outNowRaw.sort(sortMovies);
             for(movie of outNow) {
                 addCalendarItem(movie);
             }
-            apiService.get('api/cineworld/featured?type=FUTURE')
+            apiService.get('api/cinemas/featured?type=FUTURE')
             .then(futureRaw => {
                 let future = futureRaw.sort(sortMovies);
                 for(movie of future) {
