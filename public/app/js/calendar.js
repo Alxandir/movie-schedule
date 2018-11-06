@@ -30,26 +30,30 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
     });
 
     $scope.getCalendar = function () {
+        const month = $scope.calendar.month;
+        const year = $scope.calendar.year;
         if (!$rootScope.siteId) {
             return apiService.get('api/groups').then(group => {
                 $rootScope.siteId = group.siteId;
-                getCalendarInner();
+                getCalendarInner(month, year);
             }).catch(err => {
                 console.error(err);
             });
         }
-        getCalendarInner();
+        getCalendarInner(month, year);
     }
 
-    function getCalendarInner() {
-        const totalDays = daysInMonth($scope.calendar.year, $scope.calendar.month);
-        const dayOne = new Date($scope.calendar.year, $scope.calendar.month - 1, 1);
+    function getCalendarInner(month, year) {
+        const totalDays = daysInMonth(year, month);
+        const dayOne = new Date(year, month - 1, 1);
         let dayIndex = dayOne.getDay();
-        $scope.calendar.weeks = generateEmptyCalendar($scope.calendar.year, $scope.calendar.month);
         let weekIndex = 0;
 
-        apiService.get(`api/cinemas/bookings?month=${$scope.calendar.month}&year=${$scope.calendar.year}&siteId=${$rootScope.siteId}`)
+        apiService.get(`api/cinemas/bookings?month=${month}&year=${year}&siteId=${$rootScope.siteId}`)
             .then(response => {
+                if(month !== $scope.calendar.month || year !== $scope.calendar.year) {
+                    return;
+                }
                 $scope.calendar.weeks = generateEmptyCalendar($scope.calendar.year, $scope.calendar.month);
                 const bookings = response.bookings;
                 $scope.validDates = response.validDates;
