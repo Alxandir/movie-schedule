@@ -125,7 +125,7 @@ angular.module('myApp').controller('CalendarController', function ($scope, $root
 
     $scope.lookupShowTimes = function (dayObj) {
         const day = dayObj.number;
-        if (day != '' && dayObj.showtimesAvailable) {
+        if (day != '' && (dayObj.showtimesAvailable || dayObj.movie)) {
             $scope.showtimeDayNum = day;
             var dayIndex = new Date($scope.calendar.year, $scope.calendar.month - 1, day).getDay();
             $scope.showtimeDay = $scope.dayNames[dayIndex];
