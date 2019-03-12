@@ -41,7 +41,7 @@ const getShowings = async function (req, res) {
     let { movies, titles } = buildMoviesList(featureData, showtimes.body.films, showtimes.body.events, req.body.hour);
     let existingBookings = await movieDB.getBookingsByTitle(group, titles);
     movies = movies.map(movie => {
-        let booked = existingBookings.find(p => p.title === movie.title);
+        let booked = existingBookings.find(p => p.title === movie.title || p.title + ': Unlimited Screening' === movie.title || p.title === movie.title + ': Unlimited Screening');
         if (booked) {
             if (booked.timestamp <= moment().valueOf()) {
                 movie.seen = true;
@@ -50,7 +50,8 @@ const getShowings = async function (req, res) {
             }
         }
         return movie;
-    })
+    });
+    movies = movies.filter(p => !p.seen && !p.bookingExists).concat(movies.filter(p => p.bookingExists), movies.filter(p => p.seen))
 
     return res.status(200).send(movies);
 }

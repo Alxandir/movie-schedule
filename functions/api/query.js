@@ -1,5 +1,8 @@
 exports.parseQuery = function(query){
     var selector = {};
+    if(!query) {
+        return {};
+    }
     var queries = query.split('&');
     for (var i = 0; i < queries.length; i++) {
         var item = queries[i];

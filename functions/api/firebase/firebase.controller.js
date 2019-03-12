@@ -1,4 +1,4 @@
-var fs = require('fs');
+const moment = require('moment');
 var admin = require('firebase-admin');
 
 var dbCredentials = {
@@ -14,6 +14,12 @@ var bookingDB;
 let groupDB;
 let userDB;
 
+const log = {
+    lastChecked: 0,
+    size: 0,
+    all: []
+}
+
 const getBookingsByDate = async function (group, month, year, day = undefined) {
     let bookingRef;
     if (day !== undefined) {
@@ -26,28 +32,33 @@ const getBookingsByDate = async function (group, month, year, day = undefined) {
 }
 
 const getBookingsByTitle = async function (group, titles) {
+    for (title of titles) {
+        if (!title.endsWith(': Unlimited Screening')) {
+            titles.push(title + ': Unlimited Screening');
+        }
+    }
     let searches = titles.map(t => bookingDB.where('group', '==', group).where('title', '==', t).get().then(getResults));
     let results = [].concat.apply([], await Promise.all(searches));
 
     return results;
 }
 
-const getGroup = async function(id) {
+const getGroup = async function (id) {
     const doc = await groupDB.doc(id).get();
     return doc.data();
 }
 
-const getUser = async function(id) {
+const getUser = async function (id) {
     const doc = await userDB.doc(id).get();
     return doc.data();
 }
 
-const getUserByField = async function(field, value) {
+const getUserByField = async function (field, value) {
     const snapshot = await userDB.where(field, '==', value).get();
     return getResults(snapshot);
 }
 
-const verifyToken = function(token) {
+const verifyToken = function (token) {
     return admin.auth().verifyIdToken(token);
 }
 
@@ -67,12 +78,32 @@ const listAllBookings = async function (group) {
     return getResults(snapshot);
 }
 
-const listMovies = async function () {
+const ONE_DAY = 24 * 60 * 60 * 1000;
+
+const listMovies = async function (prevIndex = null) {
+    if (log.size === 0 || log.lastChecked + ONE_DAY < moment().valueOf()) {
+        await refreshMovieCache();
+    }
+    let newIndex;
+    do {
+        newIndex = randomNumber(log.size);
+    } while (newIndex === prevIndex);
+    const output = log.all[newIndex];
+    output.offset = newIndex;
+    return [output];
+}
+
+async function refreshMovieCache() {
     const snapshot = await movieDB.orderBy('score', 'desc').get();
-    return getResults(snapshot);
+    log.size = snapshot.size;
+    log.lastChecked = moment().valueOf();
+    let results = getResults(snapshot);
+    log.all = results;
+    return;
 }
 
 const addMovie = async function (newMovie) {
+    setTimeout(refreshMovieCache, 3000);
     return addItem(movieDB, newMovie);
 }
 
@@ -130,9 +161,14 @@ const initDB = function () {
     bookingDB = firestore.collection(dbCredentials.bookingDB);
     groupDB = firestore.collection(dbCredentials.groupDB);
     userDB = firestore.collection(dbCredentials.userDB);
+    refreshMovieCache();
 }
 
 function getDBCredentialsUrl(jsonData) {
+}
+
+function randomNumber(max) {
+    return Math.floor(Math.random() * (max));
 }
 
 module.exports = {

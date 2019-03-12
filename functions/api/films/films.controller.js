@@ -1,4 +1,5 @@
 var movieDB = require('../firebase/firebase.controller');
+var queries = require('../query');
 
 const addMovie = function (req, res) {
     if (!req.body || !req.body.title || !req.body.year) {
@@ -16,7 +17,9 @@ const addMovie = function (req, res) {
 }
 
 const getAllMovies = function (req, res) {
-    movieDB.listMovies().then(data => {
+    var query = queries.parseQuery(req._parsedUrl.query);
+    const prevStart = query.prev ? Number(query.prev) : null;
+    movieDB.listMovies(prevStart).then(data => {
         res.status(200).json(data);
     }).catch(err => {
         res.status(500).send(err);
