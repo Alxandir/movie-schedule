@@ -1,15 +1,7 @@
 angular.module('loginApp', []);
 angular.module('loginApp').controller('LoginController', function ($scope, $interval, apiService) {
-    $scope.allMovies = [];
+    $scope.currentBackgroundMovie;
     $scope.backgroundURL = '';
-
-    $scope.getAllMovies = function () {
-        apiService.get('api/films')
-        .then(allMovies => {
-            $scope.allMovies = allMovies;
-            changeBackground();
-        }).catch(console.log);
-    }
 
     $scope.getBackground = function () {
         return {
@@ -18,13 +10,13 @@ angular.module('loginApp').controller('LoginController', function ($scope, $inte
     }
 
     function changeBackground() {
-        var index = 0;
-        do {
-            index = Math.floor(Math.random() * $scope.allMovies.length);
-        } while (!$scope.allMovies[index].backgroundURL || $scope.allMovies[index].backgroundURL == $scope.backgroundURL)
-        $scope.backgroundURL = $scope.allMovies[index].backgroundURL;
+        apiService.get('api/films' + ($scope.currentBackgroundMovie ? '?prev=' + $scope.currentBackgroundMovie.offset : ''))
+            .then(results => {
+                $scope.currentBackgroundMovie = results[0];
+                $scope.backgroundURL = $scope.currentBackgroundMovie.backgroundURL;
+            }).catch(console.log);
     }
 
-    $scope.getAllMovies();
+    changeBackground();
     $interval(changeBackground, 20000);
 });

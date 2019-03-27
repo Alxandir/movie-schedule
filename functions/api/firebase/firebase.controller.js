@@ -80,17 +80,24 @@ const listAllBookings = async function (group) {
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
-const listMovies = async function (prevIndex = null) {
+const listMovies = async function (size = 1, prevIndex = null) {
     if (log.size === 0 || log.lastChecked + ONE_DAY < moment().valueOf()) {
         await refreshMovieCache();
     }
-    let newIndex;
-    do {
-        newIndex = randomNumber(log.size);
-    } while (newIndex === prevIndex);
-    const output = log.all[newIndex];
-    output.offset = newIndex;
-    return [output];
+    if (size === 'all') {
+        return log.all;
+    }
+    const movies = [];
+    for (let i = 0; i < size; i++) {
+        let newIndex;
+        do {
+            newIndex = randomNumber(log.size);
+        } while (newIndex === prevIndex || movies.find(p => p.offset === newIndex));
+        const output = log.all[newIndex];
+        output.offset = newIndex;
+        movies.push(output);
+    }
+    return movies;
 }
 
 async function refreshMovieCache() {

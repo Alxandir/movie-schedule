@@ -19,7 +19,11 @@ const addMovie = function (req, res) {
 const getAllMovies = function (req, res) {
     var query = queries.parseQuery(req._parsedUrl.query);
     const prevStart = query.prev ? Number(query.prev) : null;
-    movieDB.listMovies(prevStart).then(data => {
+    let size = query.size || 1;
+    if(!isNaN(size)) {
+        size = Number(size);
+    }
+    movieDB.listMovies(size, prevStart).then(data => {
         res.status(200).json(data);
     }).catch(err => {
         res.status(500).send(err);

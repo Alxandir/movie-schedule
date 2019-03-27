@@ -131,6 +131,10 @@ angular.module('myApp').controller('MainController', function ($scope, $interval
         $scope.$broadcast('getHistory');
     }
 
+    $scope.getLeaderboard = function () {
+        $scope.$broadcast('getLeaderboard');
+    }
+
     $scope.getFeatured = function () {
         $scope.$broadcast('getFeaturedMovies');
     }

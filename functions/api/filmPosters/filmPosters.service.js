@@ -49,18 +49,9 @@ const getPoster = async function (title, year) {
 }
 
 const getMovieComparison = async function () {
-    const data = await movieDB.listMovies();
-    allMovies = data;
-    var index1 = Math.floor(Math.random() * allMovies.length);
-    var index2 = 0;
-    do {
-        index2 = Math.floor(Math.random() * allMovies.length);
-    } while (index2 == index1);
+    const data = await movieDB.listMovies(2);
     
-    return [
-        allMovies[index1],
-        allMovies[index2]
-    ];
+    return data;
 }
 
 const buildPosterImageURL = function(path) {

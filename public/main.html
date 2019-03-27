@@ -9,6 +9,7 @@
     <script src="app/js/calendar.js"></script>
     <script src="app/js/comingSoon.js"></script>
     <script src="app/js/history.js"></script>
+    <script src="app/js/leaderboard.js"></script>
     <script src="app/js/signup.js"></script>
     <script src="app/js/group.js"></script>
     <script src="app/js/services/api.service.js"></script>
@@ -67,7 +68,7 @@
                 <th class="tabButton" ng-click="selectedView = 0; getMoviePosters()" ng-class="{'highlightTab': selectedView == 0}">Rate</th>
                 <th class="tabButton" ng-click="selectedView = 1; returnToAdd()" ng-class="{'highlightTab': selectedView == 1}">Add
                     A Movie</th>
-                <th class="tabButton" ng-click="selectedView = 2; getAllMovies()" ng-class="{'highlightTab': selectedView == 2}">Leaderboard</th>
+                <th class="tabButton" ng-click="selectedView = 2; getLeaderboard()" ng-class="{'highlightTab': selectedView == 2}">Leaderboard</th>
                 <th class="tabButton" ng-click="selectedView = 3; getCalendar()" ng-class="{'highlightTab': selectedView == 3}">Movie
                     Planner</th>
                 <th class="tabButton" ng-click="selectedView = 4; getComingSoonCalendar()" ng-class="{'highlightTab': selectedView == 4}">Coming
