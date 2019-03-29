@@ -2,6 +2,7 @@ angular.module('myApp', ['inputDropdown']);
 angular.module('myApp').controller('MainController', function ($scope, $interval, apiService) {
     $scope.selectedMovie = -1;
     $scope.selectedView = -1;
+    $scope.transparentView = false;
     $scope.currentBackgroundMovie;
     $scope.newFilm = {
         title: "",

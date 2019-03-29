@@ -65,6 +65,7 @@ h3 {
     vertical-align: middle;
     margin-top: 100px;
     margin-bottom: 100px;
+    transition: opacity 0.2s;
 }
 
 .overflow {
@@ -107,11 +108,19 @@ h3 {
     color: #d2d2d2;
     background-color: rgba(31, 31, 31, 0.85);
     cursor: pointer;
-    width: 14%
+    width: 12%;
+}
+
+.tabEyeButton {
+    width: 4%;
 }
 
 .highlightTab {
     border-bottom: 5px solid rgba(0, 97, 88, 1);
+}
+
+.transparentView {
+    opacity: 0.2;
 }
 
 .MovieTable {
