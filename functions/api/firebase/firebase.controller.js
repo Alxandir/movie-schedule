@@ -43,6 +43,11 @@ const getBookingsByTitle = async function (group, titles) {
     return results;
 }
 
+const getMovieByTitle = async function (title, year) {
+    const snapshot = await movieDB.where('title', '==', title).where('year', '==', year).get();
+    return getResults(snapshot);
+}
+
 const getGroup = async function (id) {
     const doc = await groupDB.doc(id).get();
     return doc.data();
@@ -182,6 +187,7 @@ module.exports = {
     initDB,
     getBookingsByDate,
     getBookingsByTitle,
+    getMovieByTitle,
     listAllBookings,
     listMovies,
     addMovie,

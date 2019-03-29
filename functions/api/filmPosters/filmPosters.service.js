@@ -14,6 +14,8 @@ const getPoster = async function (title, year) {
     
     if (response.results[0] != null) {
         return {
+            title: response.results[0].title,
+            year: Number(year),
             posterURL: buildPosterImageURL(response.results[0].poster_path),
             backgroundURL: buildBackgroundImageURL(response.results[0].backdrop_path)
         }
@@ -27,6 +29,8 @@ const getPoster = async function (title, year) {
     const previousYear = await request(lastYearOptions);
     if (previousYear.results[0] != null) {
         return {
+            title: previousYear.results[0].title,
+            year: year - 1,
             posterURL: buildPosterImageURL(previousYear.results[0].poster_path),
             backgroundURL: buildBackgroundImageURL(previousYear.results[0].backdrop_path)
         }
@@ -40,6 +44,8 @@ const getPoster = async function (title, year) {
     const unknownYear = await request(UnknownYearOptions);
     if (unknownYear.results[0] != null) {
         return {
+            title: unknownYear.results[0].title,
+            year: Number(unknownYear.results[0].release_date.split('-')[0]),
             posterURL: buildPosterImageURL(unknownYear.results[0].poster_path),
             backgroundURL: buildBackgroundImageURL(unknownYear.results[0].backdrop_path)
         }

@@ -6,6 +6,7 @@ var movieDB = require('../firebase/firebase.controller');
 
 const cineworldService = require('./cineworld.service');
 const posterService = require('../filmPosters/filmPosters.service');
+const filmsService = require('../films/films.service');
 
 const SECRET_SCREENING_IMG = 'app/images/secret-screening.jpg';
 const PUNCTUATION_REGEX = /[!@#$%^&*()-=_+|;':",.<>?']/;
@@ -174,6 +175,7 @@ const addBooking = async function (req, res) {
         const poster = await posterService.getPoster(searchTitle, req.body.year);
         newBooking.posterURL = poster.posterURL;
         newBooking.backgroundURL = poster.backgroundURL;
+        filmsService.addMovie(poster);
         const data = await movieDB.addBooking(newBooking);
         return res.status(200).send(data);
     } catch (err) {

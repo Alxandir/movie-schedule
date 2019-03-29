@@ -9,7 +9,8 @@ angular.module('myApp').controller('MainController', function ($scope, $interval
         actualTitle: "",
         year: new Date().getFullYear(),
         posterURL: "",
-        backgroundURL: ""
+        backgroundURL: "",
+        existing: false
     };
     $scope.films = [{}, {}];
     $scope.backgroundURL = '';
@@ -89,13 +90,17 @@ angular.module('myApp').controller('MainController', function ($scope, $interval
                     $scope.showWarning = true;
                     $scope.newFilm.posterURL = '';
                     $scope.newFilm.backgroundURL = '';
+                    $scope.newFilm.existing = false;
                 } else {
+                    console.log(poster);
                     $scope.showWarning = false;
                     $scope.newFilm.title = poster.title;
+                    $scope.newFilm.year = poster.year;
                     $scope.newFilm.actualTitle = poster.title;
                     $scope.newFilm.posterURL = poster.posterURL;
                     $scope.newFilm.backgroundURL = poster.backgroundURL;
                     $scope.backgroundURL = poster.backgroundURL;
+                    $scope.newFilm.existing = poster.existing;
                 }
             }).catch(console.log);
     }
