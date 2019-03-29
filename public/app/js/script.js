@@ -92,7 +92,6 @@ angular.module('myApp').controller('MainController', function ($scope, $interval
                     $scope.newFilm.backgroundURL = '';
                     $scope.newFilm.existing = false;
                 } else {
-                    console.log(poster);
                     $scope.showWarning = false;
                     $scope.newFilm.title = poster.title;
                     $scope.newFilm.year = poster.year;
