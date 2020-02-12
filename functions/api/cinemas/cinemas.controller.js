@@ -168,6 +168,7 @@ const addBooking = async function (req, res) {
     searchTitle = searchTitle.replace('(4DX) ', '');
     searchTitle = searchTitle.replace('(SS) ', '');
     searchTitle = searchTitle.replace('(4DX 3D) ', '');
+    searchTitle = searchTitle.replace('(Korean)', '');
     searchTitle = searchTitle.replace('Classic Movie Monday ', '');
     searchTitle = searchTitle.split(' + ')[0];
     searchTitle = americaniseSentence(searchTitle);
